@@ -26,6 +26,11 @@ export default function Navbar() {
   const activeStyle = "font-body-md text-body-md tracking-wider text-primary font-semibold link-underline pb-1";
   const inactiveStyle = "font-body-md text-body-md tracking-wider text-on-surface/70 hover:text-primary transition-colors link-underline pb-1";
 
+  // Silent background request to wake up the Render server
+  const wakeUpBackend = () => {
+    fetch(`${import.meta.env.VITE_API_URL || ''}/api/ping`).catch(() => {});
+  };
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50 h-24 md:h-28 w-full px-4 py-2 md:py-3">
       <nav className="glass-panel flex justify-between items-center px-6 md:px-8 w-full h-full rounded-2xl relative">
@@ -54,6 +59,7 @@ export default function Navbar() {
         <div className="hidden lg:block">
           <Link
             to="/contact#donate"
+            onClick={wakeUpBackend}
             className="bg-gradient-to-r from-primary to-amber-600 hover:from-amber-600 hover:to-primary text-white text-xs font-bold uppercase tracking-widest px-5 py-2.5 rounded-xl flex items-center justify-center gap-1.5 shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5"
           >
             <span>Donate Now</span>
@@ -90,7 +96,10 @@ export default function Navbar() {
             ))}
             <Link
               to="/contact#donate"
-              onClick={() => setMobileMenuOpen(false)}
+              onClick={() => {
+                setMobileMenuOpen(false);
+                wakeUpBackend();
+              }}
               className="bg-gradient-to-r from-primary to-amber-600 hover:from-amber-600 hover:to-primary text-white text-xs font-bold uppercase tracking-widest px-6 py-3 rounded-xl flex items-center justify-center gap-1.5 shadow-md mt-2 w-full"
             >
               <span>Donate Now</span>

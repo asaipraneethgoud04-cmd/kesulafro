@@ -1,0 +1,418 @@
+@tailwind base;
+/* Force Tailwind reload */
+@tailwind components;
+/* Trigger rebuild */
+@tailwind utilities;
+
+@font-face {
+  font-family: 'Aquavit';
+  src: url('/fonts/aquavit-font/aquavit-thin.otf') format('opentype');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Aquavit';
+  src: url('/fonts/aquavit-font/aquavit-extralight.otf') format('opentype');
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Aquavit';
+  src: url('/fonts/aquavit-font/aquavit-light.otf') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Aquavit';
+  src: url('/fonts/aquavit-font/aquavit-regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Aquavit';
+  src: url('/fonts/aquavit-font/aquavit-medium.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Aquavit';
+  src: url('/fonts/aquavit-font/aquavit-semibold.otf') format('opentype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Aquavit';
+  src: url('/fonts/aquavit-font/aquavit-bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Aquavit';
+  src: url('/fonts/aquavit-font/aquavit-extrabold.otf') format('opentype');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Aquavit';
+  src: url('/fonts/aquavit-font/aquavit-black.otf') format('opentype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@layer base {
+  html, body {
+    font-family: 'Aquavit', sans-serif !important;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    font-size: 21px;
+    font-weight: 500;
+  }
+  h1, h2, h3, h4, h5, h6, p, a, li, button, input, textarea {
+    font-family: 'Aquavit', sans-serif !important;
+  }
+}
+
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined' !important;
+  font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+}
+
+.tribal-divider {
+  background-image: url("data:image/svg+xml,%3Csvg width='100' height='20' viewBox='0 0 100 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 10 L10 0 L20 10 L10 20 Z M30 10 L40 0 L50 10 L40 20 Z M60 10 L70 0 L80 10 L70 20 Z M90 10 L100 0 L110 10 L100 20 Z' fill='%238a3004' fill-opacity='0.15'/%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  height: 20px;
+  width: 100%;
+}
+
+.warli-pattern {
+  background-image: radial-gradient(circle at 2px 2px, theme('colors.primary') 1px, transparent 0);
+  background-size: 24px 24px;
+  opacity: 0.05;
+}
+
+.warli-bg {
+  background-image: radial-gradient(theme('colors.secondary') 0.5px, transparent 0.5px);
+  background-size: 24px 24px;
+  opacity: 0.05;
+}
+
+.editorial-shadow {
+  box-shadow: 0 4px 20px -2px rgba(129, 86, 45, 0.1);
+}
+
+.section-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.section-divider::before,
+.section-divider::after {
+  content: "";
+  height: 1px;
+  width: 40px;
+  background-color: theme('colors.primary');
+  opacity: 0.3;
+}
+
+/* --- Redesign System Styles: Glassmorphism, Claymorphism, minimalism --- */
+
+/* Glassmorphism panel styling */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 8px 32px 0 rgba(138, 48, 4, 0.04);
+}
+
+.glass-panel-dark {
+  background: rgba(26, 17, 13, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.25);
+}
+
+.glass-input {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid rgba(138, 48, 4, 0.12);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-input:focus {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: theme('colors.primary');
+  box-shadow: 0 0 0 3px rgba(138, 48, 4, 0.35);
+  outline: 2px solid transparent;
+}
+
+/* Claymorphism cards & buttons styling */
+.clay-card {
+  background: theme('colors.surface-container-lowest');
+  border-radius: 24px;
+  box-shadow: 
+    inset -6px -6px 12px rgba(0, 0, 0, 0.02),
+    inset 6px 6px 12px rgba(255, 255, 255, 0.9),
+    10px 10px 24px rgba(138, 48, 4, 0.04);
+}
+
+.clay-card-colored {
+  background: theme('colors.surface-container-low');
+  border-radius: 24px;
+  box-shadow: 
+    inset -6px -6px 12px rgba(138, 48, 4, 0.04),
+    inset 6px 6px 12px rgba(255, 255, 255, 0.8),
+    10px 10px 24px rgba(138, 48, 4, 0.05);
+}
+
+.clay-btn {
+  border-radius: 14px;
+  font-weight: 600;
+  transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.clay-btn-primary {
+  background: theme('colors.surface-tint');
+  color: theme('colors.on-primary');
+  box-shadow: 
+    inset -4px -4px 8px rgba(0, 0, 0, 0.32),
+    inset 4px 4px 8px rgba(255, 255, 255, 0.25),
+    0 6px 14px rgba(138, 48, 4, 0.16);
+}
+
+.clay-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    inset -2px -2px 4px rgba(0, 0, 0, 0.32),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.25),
+    0 8px 18px rgba(138, 48, 4, 0.24);
+}
+
+.clay-btn-primary:active {
+  transform: translateY(1px);
+  box-shadow: 
+    inset -6px -6px 12px rgba(0, 0, 0, 0.38),
+    inset 6px 6px 12px rgba(255, 255, 255, 0.2),
+    0 2px 4px rgba(138, 48, 4, 0.12);
+}
+
+.clay-btn-secondary {
+  background: theme('colors.surface-container-lowest');
+  color: theme('colors.primary');
+  border: 1px solid rgba(138, 48, 4, 0.08);
+  box-shadow: 
+    inset -3px -3px 6px rgba(138, 48, 4, 0.08),
+    inset 3px 3px 6px rgba(255, 255, 255, 0.95),
+    0 6px 14px rgba(138, 48, 4, 0.04);
+}
+
+.clay-btn-secondary:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    inset -2px -2px 4px rgba(138, 48, 4, 0.08),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.95),
+    0 8px 18px rgba(138, 48, 4, 0.08);
+}
+
+.clay-btn-secondary:active {
+  transform: translateY(1px);
+  box-shadow: 
+    inset -5px -5px 10px rgba(138, 48, 4, 0.1),
+    inset 5px 5px 10px rgba(255, 255, 255, 0.95),
+    0 2px 4px rgba(138, 48, 4, 0.02);
+}
+
+.clay-badge {
+  background: theme('colors.surface');
+  border-radius: 9999px;
+  box-shadow: 
+    inset -2px -2px 4px rgba(138, 48, 4, 0.04),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(138, 48, 4, 0.06);
+}
+
+.clay-badge-active {
+  background: theme('colors.primary-fixed');
+  border-radius: 9999px;
+  box-shadow: 
+    inset -2px -2px 4px rgba(138, 48, 4, 0.15),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(138, 48, 4, 0.06);
+}
+
+.clay-badge-colored {
+  background: theme('colors.surface-container-low');
+  border-radius: 9999px;
+  box-shadow: 
+    inset -2px -2px 4px rgba(138, 48, 4, 0.08),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(138, 48, 4, 0.06);
+}
+
+.clay-btn-accent {
+  background: theme('colors.accent');
+  color: theme('colors.on-accent');
+  box-shadow: 
+    inset -4px -4px 8px rgba(0, 0, 0, 0.25),
+    inset 4px 4px 8px rgba(255, 255, 255, 0.15),
+    0 6px 14px rgba(17, 94, 89, 0.2);
+}
+
+.clay-btn-accent:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    inset -2px -2px 4px rgba(0, 0, 0, 0.25),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.15),
+    0 8px 18px rgba(17, 94, 89, 0.3);
+}
+
+.clay-btn-accent:active {
+  transform: translateY(1px);
+  box-shadow: 
+    inset -6px -6px 12px rgba(0, 0, 0, 0.3),
+    inset 6px 6px 12px rgba(255, 255, 255, 0.1),
+    0 2px 4px rgba(17, 94, 89, 0.12);
+}
+
+/* Animations */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float-delayed {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float-delayed {
+  animation: float-delayed 7s ease-in-out 2s infinite;
+}
+
+@keyframes spin-clockwise {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-clockwise {
+  animation: spin-clockwise 25s linear infinite;
+}
+
+@keyframes spin-centered {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+.animate-spin-centered {
+  animation: spin-centered 40s linear infinite;
+}
+
+@keyframes spin-vertical-centered {
+  from {
+    transform: translateY(-50%) rotate(0deg);
+  }
+  to {
+    transform: translateY(-50%) rotate(360deg);
+  }
+}
+
+.animate-spin-vertical-centered {
+  animation: spin-vertical-centered 60s linear infinite;
+}
+
+.img-zoom-container {
+  overflow: hidden;
+}
+.img-zoom-container img {
+  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.img-zoom-container:hover img {
+  transform: scale(1.05);
+}
+
+/* Smooth reveal adjustments */
+.reveal {
+  transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+}
+
+/* Smooth Links */
+.link-underline {
+  position: relative;
+  display: inline-block;
+}
+
+.link-underline::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: currentColor;
+  transition: width 0.3s ease-out;
+}
+
+.link-underline:hover::after, .link-underline.active::after {
+  width: 100%;
+}
+
+/* Text Shadows for readability over images */
+.text-shadow-md {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+.text-shadow-lg {
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 0, 0, 0.4);
+}
+
+/* Tilted Glass Card Animations */
+.tilt-card {
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.tilt-card:hover {
+  transform: perspective(1000px) rotateX(4deg) rotateY(-4deg) scale3d(1.02, 1.02, 1.02);
+  box-shadow: -12px 15px 30px rgba(0, 0, 0, 0.15);
+}
+.tilt-card.alt:hover {
+  transform: perspective(1000px) rotateX(4deg) rotateY(4deg) scale3d(1.02, 1.02, 1.02);
+  box-shadow: 12px 15px 30px rgba(0, 0, 0, 0.15);
+}
+

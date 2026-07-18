@@ -40,7 +40,7 @@ export default function Navbar() {
         {/* Logo */}
         <Link to="/" className="flex items-center gap-3 md:gap-4">
           <div className="w-16 h-16 md:w-20 md:h-20 clay-badge-colored flex items-center justify-center overflow-hidden p-0.5 md:p-1">
-            <img src="/images/logo.jpeg" alt="Kesula Trust Logo" className="w-full h-full object-contain rounded-full mix-blend-multiply" />
+            <img src="/images/logo.webp" alt="Kesula Trust Logo" className="w-full h-full object-contain rounded-full mix-blend-multiply" />
           </div>
           <span className="font-headline-md text-headline-md font-bold text-primary text-2xl md:text-3xl tracking-tight">Kesula Trust</span>
         </Link>

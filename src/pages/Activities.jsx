@@ -246,7 +246,7 @@ export default function Activities() {
           <div className="absolute inset-0 bg-white/20 z-10 pointer-events-none"></div>
           <div className="absolute inset-0 bg-gradient-to-t from-[#faf8f5] via-white/5 to-white/40 z-10 pointer-events-none"></div>
           <img 
-            src="/images/nature_bg.png" 
+            src="/images/nature_bg.webp" 
             className="w-full h-full object-cover scale-105 pointer-events-none filter brightness-95" 
             alt="" 
           />

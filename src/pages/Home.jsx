@@ -127,7 +127,7 @@ export default function Home() {
             muted
             playsInline
             preload="auto"
-            poster="/images/nature_bg.png"
+            poster="/images/nature_bg.webp"
             className="w-full h-full object-cover"
           >
             <source src="/videos/hero.mp4" type="video/mp4" />
@@ -161,7 +161,7 @@ export default function Home() {
       </section>
 
       {/* About Preview */}
-      <section className="py-section-gap pb-[360px] md:pb-[280px] relative z-10 overflow-hidden bg-cover bg-center bg-fixed" style={{ backgroundImage: "url('/images/nature_bg.png')" }}>
+      <section className="py-section-gap pb-[360px] md:pb-[280px] relative z-10 overflow-hidden bg-cover bg-center bg-fixed" style={{ backgroundImage: "url('/images/nature_bg.webp')" }}>
         {/* Dark overlay for text readability */}
         <div className="absolute inset-0 bg-black/70 z-0 pointer-events-none"></div>
         <div className="relative z-10 max-w-container mx-auto px-gutter grid md:grid-cols-2 gap-16 items-center">
@@ -169,19 +169,19 @@ export default function Home() {
             {/* Top Left Image */}
             <div className="absolute top-0 left-0 w-[55%] aspect-square rounded-3xl overflow-hidden shadow-xl z-10 hover:z-30 hover:shadow-2xl transition-all duration-500 img-zoom-container">
               <img alt="Plantation & Environment" loading="lazy" className="w-full h-full object-cover"
-                src="/images/plantation.jpeg" />
+                src="/images/plantation.webp" />
             </div>
 
             {/* Top Right Image */}
             <div className="absolute top-[15%] right-0 w-[45%] aspect-square rounded-3xl overflow-hidden shadow-lg z-0 hover:z-30 hover:shadow-2xl transition-all duration-500 img-zoom-container">
               <img alt="Cultural Celebrations" loading="lazy" className="w-full h-full object-cover"
-                src="/images/cultural.jpg" />
+                src="/images/cultural.webp" />
             </div>
 
             {/* Bottom Middle Image */}
             <div className="absolute bottom-0 left-[10%] md:left-[15%] w-[75%] md:w-[70%] aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl z-20 hover:z-30 hover:shadow-2xl transition-all duration-500 img-zoom-container">
               <img alt="Educational Programs" loading="lazy" className="w-full h-full object-cover"
-                src="/images/education.jpg" />
+                src="/images/education.webp" />
             </div>
           </div>
           <div className="reveal-right">
@@ -207,7 +207,7 @@ export default function Home() {
             <div className="grid md:grid-cols-2 gap-8">
               <TiltCard elementType={Link} to="/about" className="bg-[#fff1ec] p-8 rounded-3xl border-2 !border-[#8a3004] shadow-sm transition-all duration-300 group block relative overflow-hidden reveal-top">
                 <div className="absolute -bottom-16 -right-16 w-72 h-72 opacity-[0.40] mix-blend-multiply pointer-events-none transition-transform duration-700 group-hover:scale-110 z-0">
-                  <img src="/images/tribal_2.png" loading="lazy" className="w-full h-full object-contain animate-spin-clockwise" alt="" />
+                  <img src="/images/tribal_2.webp" loading="lazy" className="w-full h-full object-contain animate-spin-clockwise" alt="" />
                 </div>
                 <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-2xl -mr-10 -mt-10 transition-all group-hover:bg-primary/10 z-0"></div>
                 <div className="flex items-center gap-4 mb-4 relative z-10">
@@ -226,7 +226,7 @@ export default function Home() {
 
               <TiltCard elementType={Link} to="/about" className="bg-[#fff1ec] p-8 rounded-3xl border-2 !border-[#8a3004] shadow-sm transition-all duration-300 group block relative overflow-hidden reveal-bottom">
                 <div className="absolute -bottom-16 -right-16 w-72 h-72 opacity-[0.40] mix-blend-multiply pointer-events-none transition-transform duration-700 group-hover:scale-110 z-0">
-                  <img src="/images/tribal_2.png" loading="lazy" className="w-full h-full object-contain animate-spin-clockwise" alt="" />
+                  <img src="/images/tribal_2.webp" loading="lazy" className="w-full h-full object-contain animate-spin-clockwise" alt="" />
                 </div>
                 <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-2xl -mr-10 -mt-10 transition-all group-hover:bg-primary/10 z-0"></div>
                 <div className="flex items-center gap-4 mb-4 relative z-10">
@@ -248,7 +248,7 @@ export default function Home() {
       </div>
 
       {/* Stats - Minimalist line art */}
-      <section className="pt-44 md:pt-[300px] pb-44 relative z-10 overflow-hidden bg-cover bg-center bg-fixed" style={{ backgroundImage: "url('/images/artisan_bg.png')" }}>
+      <section className="pt-44 md:pt-[300px] pb-44 relative z-10 overflow-hidden bg-cover bg-center bg-fixed" style={{ backgroundImage: "url('/images/artisan_bg.webp')" }}>
         {/* Dark overlay for text readability */}
         <div className="absolute inset-0 bg-black/60 z-0"></div>
         <div className="relative z-10 max-w-container mx-auto px-gutter">
@@ -297,7 +297,7 @@ export default function Home() {
       {/* Impact Stats - Claymorphic Grid */}
       <section className="py-44 relative z-10 overflow-hidden">
         {/* Zig-Zag Tribal Art (Left) */}
-        <img src="/images/tribal_1.png" loading="lazy" className="absolute top-1/2 -translate-y-1/2 left-0 w-[650px] h-[650px] opacity-[0.25] mix-blend-overlay pointer-events-none object-contain animate-spin-vertical-centered" alt="" />
+        <img src="/images/tribal_1.webp" loading="lazy" className="absolute top-1/2 -translate-y-1/2 left-0 w-[650px] h-[650px] opacity-[0.25] mix-blend-overlay pointer-events-none object-contain animate-spin-vertical-centered" alt="" />
         <div className="max-w-container mx-auto px-gutter text-center">
           <h2 className="text-4xl md:text-5xl font-bold text-primary mb-12 reveal-top">Our Collective Impact</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 reveal-bottom">
@@ -325,7 +325,7 @@ export default function Home() {
       {upcomingEvents.length > 0 && (
         <section className="py-44 relative z-10 overflow-hidden bg-white/80 backdrop-blur-sm border-t border-white/50">
           {/* Zig-Zag Tribal Art (Right) */}
-          <img src="/images/tribal_2.png" loading="lazy" className="absolute top-1/2 -translate-y-1/2 right-0 w-[650px] h-[650px] opacity-[0.40] mix-blend-multiply pointer-events-none object-contain animate-spin-vertical-centered" alt="" />
+          <img src="/images/tribal_2.webp" loading="lazy" className="absolute top-1/2 -translate-y-1/2 right-0 w-[650px] h-[650px] opacity-[0.40] mix-blend-multiply pointer-events-none object-contain animate-spin-vertical-centered" alt="" />
           <div className="max-w-container mx-auto px-gutter">
             <div className="flex items-center justify-between gap-4 mb-10 reveal-top">
               <h2 className="text-4xl md:text-5xl font-extrabold text-primary">Upcoming Events</h2>
@@ -422,7 +422,7 @@ export default function Home() {
 
       {/* Photo Gallery Section - Circular Animation */}
       <section className="pt-44 pb-24 relative z-10 overflow-hidden bg-surface-container/30">
-        <img src="/images/rangoli_bg.png" loading="lazy" className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] md:w-[800px] h-auto opacity-[0.25] mix-blend-multiply pointer-events-none object-contain z-0 animate-spin-centered" alt="" />
+        <img src="/images/rangoli_bg.webp" loading="lazy" className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] md:w-[800px] h-auto opacity-[0.25] mix-blend-multiply pointer-events-none object-contain z-0 animate-spin-centered" alt="" />
         <div className="max-w-container mx-auto px-gutter relative z-10">
           <div className="text-center mb-16 reveal-top">
             <span className="text-primary font-extrabold text-xs uppercase tracking-[0.2em] block mb-3">Our Memories</span>
@@ -447,7 +447,7 @@ export default function Home() {
 
       {/* CTA Banner - Premium Glassmorphic Overlay over Dark Background */}
       <section className="max-w-container mx-auto px-gutter mb-44 relative z-10 reveal">
-        <div className="rounded-3xl p-12 md:p-16 border border-white/10 shadow-2xl relative overflow-hidden text-center text-white bg-cover bg-center" style={{ backgroundImage: "url('/images/be.png')" }}>
+        <div className="rounded-3xl p-12 md:p-16 border border-white/10 shadow-2xl relative overflow-hidden text-center text-white bg-cover bg-center" style={{ backgroundImage: "url('/images/be.webp')" }}>
           {/* Dark overlay for text readability */}
           <div className="absolute inset-0 bg-black/50 z-0 pointer-events-none"></div>
           <div className="absolute -top-24 -left-24 w-64 h-64 rounded-full bg-primary/30 blur-[90px] pointer-events-none z-0"></div>

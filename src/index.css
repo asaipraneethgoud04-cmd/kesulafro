@@ -130,7 +130,7 @@
 }
 
 .tribal-border-image-top {
-  background-image: url('/images/border.png');
+  background-image: url('/images/border.webp');
   background-repeat: repeat-x;
   background-size: auto 100%;
   height: 80px;
@@ -139,7 +139,7 @@
 }
 
 .tribal-border-image-bottom {
-  background-image: url('/images/border.png');
+  background-image: url('/images/border.webp');
   background-repeat: repeat-x;
   background-size: auto 100%;
   height: 80px;

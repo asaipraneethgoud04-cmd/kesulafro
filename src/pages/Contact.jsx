@@ -226,13 +226,13 @@ export default function Contact() {
   return (
     <div className="relative overflow-hidden bg-background text-on-surface min-h-screen">
       {/* Background fixed image and glow blobs */}
-      <div className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-[0.02] pointer-events-none mix-blend-multiply" style={{ backgroundImage: "url('/images/artisan_bg.png')" }}></div>
+      <div className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-[0.02] pointer-events-none mix-blend-multiply" style={{ backgroundImage: "url('/images/artisan_bg.webp')" }}></div>
       <div className="absolute top-[5%] left-[-10%] w-[45vw] h-[45vw] rounded-full blur-[130px] opacity-10 bg-primary pointer-events-none z-0"></div>
       <div className="absolute bottom-[30%] right-[-10%] w-[50vw] h-[50vw] rounded-full blur-[140px] opacity-[0.06] bg-secondary pointer-events-none z-0"></div>
       <div className="absolute bottom-[5%] left-[-10%] w-[45vw] h-[45vw] rounded-full blur-[130px] opacity-[0.05] bg-primary pointer-events-none z-0"></div>
 
       {/* Hero Header */}
-      <section className="relative min-h-[800px] flex items-center justify-center pt-32 pb-20 md:pt-48 md:pb-24 overflow-hidden z-10 reveal bg-cover bg-center bg-fixed" style={{ backgroundImage: "url('/images/contact.png')" }}>
+      <section className="relative min-h-[800px] flex items-center justify-center pt-32 pb-20 md:pt-48 md:pb-24 overflow-hidden z-10 reveal bg-cover bg-center bg-fixed" style={{ backgroundImage: "url('/images/contact.webp')" }}>
         <div className="absolute inset-0 bg-black/60 z-0 pointer-events-none"></div>
         <div className="relative z-10 text-center text-white px-gutter max-w-2xl mx-auto w-full">
           <span className="text-white font-extrabold text-xs uppercase tracking-[0.25em] block mb-3 text-shadow-md">Reach Out</span>
@@ -243,7 +243,7 @@ export default function Contact() {
 
       {/* Main Grid: Details + Contact Form */}
       <section className="py-20 max-w-container mx-auto px-gutter relative z-10 reveal overflow-hidden">
-        <img src="/images/tribal_3.png" className="absolute top-[30%] -translate-y-1/2 right-[-150px] w-[550px] h-[550px] opacity-[0.35] mix-blend-multiply pointer-events-none object-contain z-0 animate-spin-vertical-centered" alt="" />
+        <img src="/images/tribal_3.webp" className="absolute top-[30%] -translate-y-1/2 right-[-150px] w-[550px] h-[550px] opacity-[0.35] mix-blend-multiply pointer-events-none object-contain z-0 animate-spin-vertical-centered" alt="" />
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start relative z-10">
 
           {/* Details column — Premium Card */}
@@ -376,7 +376,7 @@ export default function Contact() {
 
       {/* 2. Donate Section (#donate) */}
       <section id="donate" className="py-16 relative z-10 reveal overflow-hidden">
-        <img src="/images/tribal_2.png" className="absolute top-1/2 -translate-y-1/2 left-[-150px] w-[550px] h-[550px] opacity-[0.35] mix-blend-multiply pointer-events-none object-contain z-0 animate-spin-vertical-centered" alt="" />
+        <img src="/images/tribal_2.webp" className="absolute top-1/2 -translate-y-1/2 left-[-150px] w-[550px] h-[550px] opacity-[0.35] mix-blend-multiply pointer-events-none object-contain z-0 animate-spin-vertical-centered" alt="" />
         <div className="max-w-4xl mx-auto px-gutter text-center relative z-10">
           <span className="text-primary font-bold text-xs uppercase tracking-[0.2em] block mb-2">Support Our Work</span>
           <h2 className="font-headline-lg text-headline-lg">Help Us Keep Going</h2>
@@ -479,7 +479,7 @@ export default function Contact() {
 
       {/* 3. Volunteer/Membership Form (#volunteer) */}
       <section id="volunteer" className="py-16 relative z-10 reveal overflow-hidden">
-        <img src="/images/tribal_1.png" className="absolute top-1/2 -translate-y-1/2 right-[-150px] w-[550px] h-[550px] opacity-[0.35] mix-blend-multiply pointer-events-none object-contain z-0 animate-spin-vertical-centered" alt="" />
+        <img src="/images/tribal_1.webp" className="absolute top-1/2 -translate-y-1/2 right-[-150px] w-[550px] h-[550px] opacity-[0.35] mix-blend-multiply pointer-events-none object-contain z-0 animate-spin-vertical-centered" alt="" />
         <div className="max-w-3xl mx-auto px-gutter relative z-10">
           <div className="text-center mb-12">
             <span className="text-primary font-bold text-xs uppercase tracking-[0.2em] block mb-2">Be Part of This</span>

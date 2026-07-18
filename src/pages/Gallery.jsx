@@ -76,7 +76,7 @@ export default function Gallery() {
   return (
     <div className="min-h-screen bg-surface flex flex-col">
       {/* Hero Section */}
-      <section className="relative min-h-[800px] flex items-center justify-center pt-32 pb-20 md:pt-48 md:pb-24 z-10 reveal overflow-hidden bg-cover bg-center bg-fixed" style={{ backgroundImage: "url('/images/gallery.png')" }}>
+      <section className="relative min-h-[800px] flex items-center justify-center pt-32 pb-20 md:pt-48 md:pb-24 z-10 reveal overflow-hidden bg-cover bg-center bg-fixed" style={{ backgroundImage: "url('/images/gallery.webp')" }}>
         <div className="absolute inset-0 bg-black/60 z-0 pointer-events-none"></div>
         <div className="max-w-container mx-auto px-gutter text-center relative z-10 w-full">
           <span className="text-white font-extrabold text-xs uppercase tracking-[0.2em] block mb-3 reveal-top text-shadow-md">Memories & Moments</span>
@@ -89,9 +89,9 @@ export default function Gallery() {
 
       {/* Masonry Grid Section */}
       <section className="py-20 relative z-10 overflow-hidden">
-        <img src="/images/rangoli_bg.png" className="absolute top-[-100px] left-[-100px] w-[550px] h-auto opacity-[0.35] mix-blend-multiply pointer-events-none object-contain z-0 animate-spin-clockwise" alt="" />
-        <img src="/images/tribal_2.png" className="absolute top-[30%] -translate-y-1/2 right-[-150px] w-[500px] h-[500px] opacity-[0.35] mix-blend-multiply pointer-events-none object-contain z-0 animate-spin-vertical-centered" alt="" />
-        <img src="/images/tribal_1.png" className="absolute bottom-[20%] left-[-150px] w-[500px] h-[500px] opacity-[0.35] mix-blend-multiply pointer-events-none object-contain z-0 animate-spin-clockwise" alt="" />
+        <img src="/images/rangoli_bg.webp" className="absolute top-[-100px] left-[-100px] w-[550px] h-auto opacity-[0.35] mix-blend-multiply pointer-events-none object-contain z-0 animate-spin-clockwise" alt="" />
+        <img src="/images/tribal_2.webp" className="absolute top-[30%] -translate-y-1/2 right-[-150px] w-[500px] h-[500px] opacity-[0.35] mix-blend-multiply pointer-events-none object-contain z-0 animate-spin-vertical-centered" alt="" />
+        <img src="/images/tribal_1.webp" className="absolute bottom-[20%] left-[-150px] w-[500px] h-[500px] opacity-[0.35] mix-blend-multiply pointer-events-none object-contain z-0 animate-spin-clockwise" alt="" />
         <div className="max-w-container mx-auto px-gutter relative z-10">
           <div className="gallery-masonry-grid">
             {allImages.map((img, index) => {

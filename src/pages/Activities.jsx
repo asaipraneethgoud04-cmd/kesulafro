@@ -536,132 +536,236 @@ export default function Activities() {
             <p className="text-sm font-light mt-1">We haven't added any events from the admin dashboard yet. Check back soon!</p>
           </div>
         ) : (
-          <div ref={containerRef} className="max-w-container mx-auto px-gutter grid grid-cols-1 lg:grid-cols-2 gap-16 items-start relative">
-            
-            {/* Invisible Trigger Elements in Normal Document Flow for Observer Scroll Spy (Calculates bidirectional triggers perfectly) */}
-            <div className="absolute left-0 top-0 w-full h-full pointer-events-none z-0 overflow-hidden">
-              {filteredEvents.map((event) => (
-                <div
-                  key={`trigger-${event.id}`}
-                  data-event-id={event.id}
-                  className="event-scroll-trigger h-[calc(100vh-240px)]"
-                />
-              ))}
-            </div>
-
-            {/* Left Column: Stacking Event Cover Images with Top Alignment & Scroll Velocity Skewing + Sub-Parallax image movement */}
-            <div className="grid gap-2 relative z-10">
-              {filteredEvents.map((event, idx) => {
-                const isActive = activeEventData?.id === event.id;
-
-                return (
-                  <ParallaxEventCard
-                    key={event.id}
-                    event={event}
-                    idx={idx}
-                    isActive={isActive}
-                    fallbackImages={fallbackImages}
-                    skewSpring={skewSpring}
-                    scaleSpring={scaleSpring}
-                  />
-                );
-              })}
-            </div>
-
-            {/* Right Column: Pinned Sticky Event Details (Fixed static position, centered vertically while scrolling) */}
-            <div className="sticky top-[130px] h-[calc(100vh-240px)] flex gap-8 text-left pl-4 lg:pl-12 z-10 pt-2 items-center">
+          <>
+            {/* Desktop View (lg and up) */}
+            <div ref={containerRef} className="hidden lg:grid max-w-container mx-auto px-gutter grid-cols-2 gap-16 items-start relative">
               
-              {/* Permanent Continuous Vertical Timeline Thread */}
-              <div className="w-1 flex flex-col items-center relative select-none pointer-events-none hidden sm:flex h-[260px]">
-                <div className="w-[2px] bg-slate-200/60 h-full rounded-full absolute top-0 bottom-0"></div>
-                
-                {/* Scroll-driven moving dot indicator */}
-                <motion.div 
-                  style={{ y: dotY }}
-                  className="w-3.5 h-3.5 rounded-full bg-[#8a3004] border-2 border-white shadow-[0_0_12px_rgba(138,48,4,0.4)] z-10 absolute left-[-5px]"
-                />
+              {/* Invisible Trigger Elements in Normal Document Flow for Observer Scroll Spy (Calculates bidirectional triggers perfectly) */}
+              <div className="absolute left-0 top-0 w-full h-full pointer-events-none z-0 overflow-hidden">
+                {filteredEvents.map((event) => (
+                  <div
+                    key={`trigger-${event.id}`}
+                    data-event-id={event.id}
+                    className="event-scroll-trigger h-[calc(100vh-240px)]"
+                  />
+                ))}
               </div>
 
-              {/* Dynamic Event Details Content (Fade/morph transition) */}
-              <motion.div 
-                style={{ skewY: skewSpring }}
-                className="flex-1 max-w-lg origin-left"
-              >
-                <AnimatePresence mode="wait">
-                  {activeEventData ? (
-                    <motion.div
-                      key={activeEventData.id}
-                      variants={containerVariants}
-                      initial="hidden"
-                      animate="show"
-                      exit="hidden"
-                      className="space-y-4"
-                    >
-                      {/* Editorial Typographical Block */}
-                      <motion.div variants={itemVariants} className="space-y-2">
-                        <span className="text-[#8a3004] font-extrabold text-xs uppercase tracking-[0.3em] block mb-1 font-mono">
-                          {activeEventData.category}
-                        </span>
-                        
-                        {/* Staggered Word Reveal Heading */}
-                        <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tighter text-slate-900 font-serif leading-tight mb-1">
-                          {activeEventData.title.split(" ").map((word, i) => (
-                            <span key={i} className="inline-block overflow-hidden mr-3">
-                              <motion.span
-                                initial={{ y: "100%" }}
-                                animate={{ y: 0 }}
-                                transition={{ duration: 0.7, delay: i * 0.05, ease: [0.16, 1, 0.3, 1] }}
-                                className="inline-block"
-                              >
-                                {word}
-                              </motion.span>
-                            </span>
-                          ))}
-                        </h2>
+              {/* Left Column: Stacking Event Cover Images with Top Alignment & Scroll Velocity Skewing + Sub-Parallax image movement */}
+              <div className="grid gap-2 relative z-10">
+                {filteredEvents.map((event, idx) => {
+                  const isActive = activeEventData?.id === event.id;
 
-                        {/* Giant Date & Location Typographic Block */}
-                        <div className="border-t border-slate-200/80 pt-4 space-y-1">
-                          <span className="text-xl sm:text-2xl font-serif italic text-slate-800 block leading-none">
-                            {activeEventData.date}
-                          </span>
-                          <span className="text-[10px] uppercase tracking-[0.2em] font-extrabold text-[#c5a880] block">
-                            {activeEventData.location}
-                          </span>
-                        </div>
-                      </motion.div>
+                  return (
+                    <ParallaxEventCard
+                      key={event.id}
+                      event={event}
+                      idx={idx}
+                      isActive={isActive}
+                      fallbackImages={fallbackImages}
+                      skewSpring={skewSpring}
+                      scaleSpring={scaleSpring}
+                    />
+                  );
+                })}
+              </div>
 
-                      {/* Editorial Description Text */}
-                      <motion.p 
-                        variants={itemVariants} 
-                        className="text-[15px] text-slate-700 font-light leading-relaxed font-sans"
+              {/* Right Column: Pinned Sticky Event Details (Fixed static position, centered vertically while scrolling) */}
+              <div className="sticky top-[130px] h-[calc(100vh-240px)] flex gap-8 text-left pl-4 lg:pl-12 z-10 pt-2 items-center">
+                
+                {/* Permanent Continuous Vertical Timeline Thread */}
+                <div className="w-1 flex flex-col items-center relative select-none pointer-events-none hidden sm:flex h-[260px]">
+                  <div className="w-[2px] bg-slate-200/60 h-full rounded-full absolute top-0 bottom-0"></div>
+                  
+                  {/* Scroll-driven moving dot indicator */}
+                  <motion.div 
+                    style={{ y: dotY }}
+                    className="w-3.5 h-3.5 rounded-full bg-[#8a3004] border-2 border-white shadow-[0_0_12px_rgba(138,48,4,0.4)] z-10 absolute left-[-5px]"
+                  />
+                </div>
+
+                {/* Dynamic Event Details Content (Fade/morph transition) */}
+                <motion.div 
+                  style={{ skewY: skewSpring }}
+                  className="flex-1 max-w-lg origin-left"
+                >
+                  <AnimatePresence mode="wait">
+                    {activeEventData ? (
+                      <motion.div
+                        key={activeEventData.id}
+                        variants={containerVariants}
+                        initial="hidden"
+                        animate="show"
+                        exit="hidden"
+                        className="space-y-4"
                       >
-                        {activeEventData.description}
-                      </motion.p>
-
-                      {/* Minimalist Editorial Tags Separated by Slashes */}
-                      {activeEventData.tags && (
-                        <motion.div 
-                          variants={itemVariants}
-                          className="pt-6 border-t border-slate-100 text-[10px] font-bold uppercase tracking-[0.25em] text-slate-500 leading-relaxed"
-                        >
-                          {activeEventData.tags.split(',').map((tag, i) => (
-                            <span key={i}>
-                              {i > 0 && <span className="text-slate-300 mx-3">/</span>}
-                              <span className="hover:text-[#8a3004] transition-colors duration-200 cursor-default">
-                                {tag.trim()}
+                        {/* Editorial Typographical Block */}
+                        <motion.div variants={itemVariants} className="space-y-2">
+                          <span className="text-[#8a3004] font-extrabold text-xs uppercase tracking-[0.3em] block mb-1 font-mono">
+                            {activeEventData.category}
+                          </span>
+                          
+                          {/* Staggered Word Reveal Heading */}
+                          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tighter text-slate-900 font-serif leading-tight mb-1">
+                            {activeEventData.title.split(" ").map((word, i) => (
+                              <span key={i} className="inline-block overflow-hidden mr-3">
+                                <motion.span
+                                  initial={{ y: "100%" }}
+                                  animate={{ y: 0 }}
+                                  transition={{ duration: 0.7, delay: i * 0.05, ease: [0.16, 1, 0.3, 1] }}
+                                  className="inline-block"
+                                >
+                                  {word}
+                                </motion.span>
                               </span>
+                            ))}
+                          </h2>
+
+                          {/* Giant Date & Location Typographic Block */}
+                          <div className="border-t border-slate-200/80 pt-4 space-y-1">
+                            <span className="text-xl sm:text-2xl font-serif italic text-slate-800 block leading-none">
+                              {activeEventData.date}
                             </span>
-                          ))}
+                            <span className="text-[10px] uppercase tracking-[0.2em] font-extrabold text-[#c5a880] block">
+                              {activeEventData.location}
+                            </span>
+                          </div>
                         </motion.div>
-                      )}
-                    </motion.div>
-                  ) : null}
-                </AnimatePresence>
-              </motion.div>
+
+                        {/* Editorial Description Text */}
+                        <motion.p 
+                          variants={itemVariants} 
+                          className="text-[15px] text-slate-700 font-light leading-relaxed font-sans"
+                        >
+                          {activeEventData.description}
+                        </motion.p>
+
+                        {/* Minimalist Editorial Tags Separated by Slashes */}
+                        {activeEventData.tags && (
+                          <motion.div 
+                            variants={itemVariants}
+                            className="pt-6 border-t border-slate-100 text-[10px] font-bold uppercase tracking-[0.25em] text-slate-500 leading-relaxed"
+                          >
+                            {activeEventData.tags.split(',').map((tag, i) => (
+                              <span key={i}>
+                                {i > 0 && <span className="text-slate-300 mx-3">/</span>}
+                                <span className="hover:text-[#8a3004] transition-colors duration-200 cursor-default">
+                                  {tag.trim()}
+                                </span>
+                              </span>
+                            ))}
+                          </motion.div>
+                        )}
+                      </motion.div>
+                    ) : null}
+                  </AnimatePresence>
+                </motion.div>
+
+              </div>
 
             </div>
 
-          </div>
+            {/* Mobile/Tablet view: Horizontal Carousel Slider */}
+            <div className="lg:hidden w-full relative">
+              {/* Floating Navigation Controls */}
+              {filteredEvents.length > 1 && (
+                <div className="flex justify-end gap-2 mb-6 px-gutter max-w-container mx-auto">
+                  <button 
+                    onClick={() => {
+                      const carousel = document.getElementById('mobile-past-events-carousel');
+                      if (carousel) {
+                        carousel.scrollBy({ left: -carousel.clientWidth * 0.8, behavior: 'smooth' });
+                      }
+                    }}
+                    className="w-10 h-10 rounded-full border border-slate-200 bg-white shadow-sm flex items-center justify-center text-primary hover:bg-[#faf8f5] transition-all"
+                  >
+                    <span className="material-symbols-outlined text-base font-bold">arrow_back</span>
+                  </button>
+                  <button 
+                    onClick={() => {
+                      const carousel = document.getElementById('mobile-past-events-carousel');
+                      if (carousel) {
+                        carousel.scrollBy({ left: carousel.clientWidth * 0.8, behavior: 'smooth' });
+                      }
+                    }}
+                    className="w-10 h-10 rounded-full border border-slate-200 bg-white shadow-sm flex items-center justify-center text-primary hover:bg-[#faf8f5] transition-all"
+                  >
+                    <span className="material-symbols-outlined text-base font-bold">arrow_forward</span>
+                  </button>
+                </div>
+              )}
+
+              {/* Horizontal Scroll Container */}
+              <div 
+                id="mobile-past-events-carousel"
+                className="flex overflow-x-auto snap-x snap-mandatory gap-6 scrollbar-none pb-8 px-gutter"
+              >
+                {filteredEvents.map((event) => {
+                  const eventImg = event.imageUrl;
+                  
+                  return (
+                    <div 
+                      key={`mobile-${event.id}`}
+                      className="w-[85vw] sm:w-[460px] flex-shrink-0 snap-center bg-white rounded-[32px] overflow-hidden border border-slate-100 shadow-md flex flex-col"
+                    >
+                      {/* Image header */}
+                      <div className="w-full aspect-[16/11] relative bg-slate-50">
+                        {eventImg ? (
+                          <img 
+                            src={eventImg} 
+                            className="w-full h-full object-cover" 
+                            alt={event.title} 
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-gradient-to-br from-[#8a3004] via-[#752601] to-[#4c1600] flex items-center justify-center relative overflow-hidden">
+                            <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]"></div>
+                            <span className="material-symbols-outlined text-5xl text-white/20">event</span>
+                          </div>
+                        )}
+                        <span className="absolute bottom-4 left-4 bg-[#8a3004] text-white text-[10px] uppercase font-extrabold tracking-widest px-3 py-1.5 rounded-full shadow-md">
+                          {event.category}
+                        </span>
+                      </div>
+
+                      {/* Content body */}
+                      <div className="p-6 flex flex-col flex-grow text-left space-y-4">
+                        <div className="border-b border-slate-100 pb-3 flex flex-wrap gap-x-4 gap-y-1 items-center">
+                          <div className="flex items-center gap-1 text-[11px] font-bold text-[#c5a880] tracking-wider uppercase">
+                            <span className="material-symbols-outlined text-[14px]">calendar_today</span>
+                            <span>{event.date}</span>
+                          </div>
+                          {event.location && (
+                            <div className="flex items-center gap-1 text-[11px] font-bold text-slate-400 tracking-wider uppercase">
+                              <span className="material-symbols-outlined text-[14px]">location_on</span>
+                              <span>{event.location}</span>
+                            </div>
+                          )}
+                        </div>
+
+                        <h3 className="text-xl font-bold text-slate-800 tracking-tight font-serif leading-snug line-clamp-2">
+                          {event.title}
+                        </h3>
+
+                        <p className="text-[13px] text-slate-500 leading-relaxed font-light line-clamp-4">
+                          {event.description}
+                        </p>
+
+                        {event.tags && (
+                          <div className="pt-2 text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400 flex flex-wrap gap-x-2 gap-y-1">
+                            {event.tags.split(',').map((tag, i) => (
+                              <span key={i} className="bg-slate-50 px-2 py-1 rounded">
+                                {tag.trim()}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </>
         )}
       </section>
 

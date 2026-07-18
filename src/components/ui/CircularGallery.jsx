@@ -413,6 +413,8 @@ class App {
     this.createMedias(items, bend, textColor, borderRadius, font);
     this.update();
     this.addEventListeners();
+    this.setupIntersectionObserver();
+    this.setupVisibilityHandler();
   }
   createRenderer() {
     this.renderer = new Renderer({
@@ -560,6 +562,10 @@ class App {
     }
   }
   update() {
+    if (!this.isVisible || document.hidden) {
+      this.raf = window.requestAnimationFrame(this.update.bind(this));
+      return;
+    }
     this.scroll.current = lerp(this.scroll.current, this.scroll.target, this.scroll.ease);
     const direction = this.scroll.current > this.scroll.last ? 'right' : 'left';
     if (this.medias) {
@@ -568,6 +574,25 @@ class App {
     this.renderer.render({ scene: this.scene, camera: this.camera });
     this.scroll.last = this.scroll.current;
     this.raf = window.requestAnimationFrame(this.update.bind(this));
+  }
+  
+  setupIntersectionObserver() {
+    this.isVisible = true; // default true until observer fires
+    if ('IntersectionObserver' in window) {
+      this.observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          this.isVisible = entry.isIntersecting;
+        });
+      }, { threshold: 0 });
+      if (this.container) this.observer.observe(this.container);
+    }
+  }
+
+  setupVisibilityHandler() {
+    this.boundVisibilityHandler = () => {
+      // Just rely on document.hidden in the update loop
+    };
+    document.addEventListener('visibilitychange', this.boundVisibilityHandler);
   }
   addEventListeners() {
     this.boundOnResize = this.onResize.bind(this);
@@ -607,6 +632,11 @@ class App {
     if (this.container) {
       this.container.removeEventListener('keydown', this.boundOnKeyDown);
     }
+    
+    if (this.observer) {
+      this.observer.disconnect();
+    }
+    document.removeEventListener('visibilitychange', this.boundVisibilityHandler);
   }
 }
 

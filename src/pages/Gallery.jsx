@@ -76,13 +76,13 @@ export default function Gallery() {
   return (
     <div className="min-h-screen bg-surface flex flex-col">
       {/* Hero Section */}
-      <section className="relative min-h-[400px] flex items-center justify-center pt-32 pb-20 md:pt-48 md:pb-24 z-10 reveal overflow-hidden bg-cover bg-center bg-fixed" style={{ backgroundImage: "url('/images/artisan_bg.png')" }}>
+      <section className="relative min-h-[800px] flex items-center justify-center pt-32 pb-20 md:pt-48 md:pb-24 z-10 reveal overflow-hidden bg-cover bg-center bg-fixed" style={{ backgroundImage: "url('/images/gallery.png')" }}>
         <div className="absolute inset-0 bg-black/60 z-0 pointer-events-none"></div>
         <div className="max-w-container mx-auto px-gutter text-center relative z-10 w-full">
-          <span className="text-white font-extrabold text-xs uppercase tracking-[0.2em] block mb-3 reveal-top text-shadow-md">Visual Journey</span>
-          <h1 className="font-headline-lg text-4xl sm:text-5xl md:text-display-lg text-white mb-6 leading-tight tracking-tight max-w-4xl mx-auto text-shadow-lg reveal-top">Our Gallery</h1>
-          <p className="font-body-lg text-body-lg text-white/95 max-w-2xl mx-auto leading-relaxed font-medium text-shadow-md reveal-top">
-            Explore the beautiful moments of impact, community, and service.
+          <span className="text-white font-extrabold text-xs uppercase tracking-[0.2em] block mb-3 reveal-top text-shadow-md">Memories & Moments</span>
+          <h1 className="text-[44px] md:text-[56px] lg:text-[72px] font-bold text-white mb-6 leading-[1.05] tracking-tight max-w-4xl mx-auto text-shadow-lg reveal-top">Our Gallery</h1>
+          <p className="text-base md:text-lg text-white/95 max-w-2xl mx-auto leading-relaxed font-medium text-shadow-md reveal-top">
+            Real moments from real places — our camps, our schools, our festivals. No stock photos, just life as it happens.
           </p>
         </div>
       </section>

@@ -97,15 +97,15 @@ const AutoScrollGallery = ({ items }) => {
         <div className="absolute top-0 left-0 w-full h-24 bg-gradient-to-b from-surface-container/30 to-transparent z-10 pointer-events-none"></div>
         <div className="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-t from-surface-container/30 to-transparent z-10 pointer-events-none"></div>
 
-        {/* Column 1 (Scrolls Up, 20s scaled to 80s for slower movement) */}
+         {/* Column 1 (Scrolls Up, loop baseline 80s) */}
         <ScrollColumn speed="80s" direction="up" items={col1Items} />
         
-        {/* Column 2 (Scrolls Down, 24s scaled to 96s) - Hidden on tablet, shown on lg */}
+        {/* Column 2 (Scrolls Down, offset to 96s) - Hidden on tablet, shown on lg */}
         <div className="hidden lg:block">
            <ScrollColumn speed="96s" direction="down" items={col2Items} />
         </div>
 
-        {/* Column 3 (Scrolls Up, 22s scaled to 88s) */}
+        {/* Column 3 (Scrolls Up, offset to 88s) */}
         <ScrollColumn speed="88s" direction="up" items={col3Items} />
       </div>
 
@@ -117,7 +117,7 @@ const AutoScrollGallery = ({ items }) => {
 
         <div 
           className="flex w-max animate-scroll-left group-hover:[animation-play-state:paused]"
-          style={{ animationDuration: '60s' }}
+          style={{ animationDuration: '80s' }}
         >
           {/* Block 1 */}
           <div className="flex gap-4 pr-4">

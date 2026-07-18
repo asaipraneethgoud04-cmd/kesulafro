@@ -88,23 +88,26 @@ export default {
         "body-md": ["Aquavit", "sans-serif"]
       },
       fontSize: {
-        "xs": "0.8rem",
-        "sm": "0.92rem",
-        "base": "1.08rem",
-        "lg": "1.2rem",
-        "xl": "1.4rem",
-        "2xl": "1.6rem",
-        "3xl": "2rem",
-        "4xl": "2.4rem",
-        "5xl": "3.2rem",
-        "6xl": "4.4rem",
-        "headline-md": ["32px", { "lineHeight": "38px", "fontWeight": "600" }],
-        "headline-lg": ["45px", { "lineHeight": "51px", "fontWeight": "700" }],
-        "body-lg": ["22px", { "lineHeight": "32px", "fontWeight": "400" }],
-        "label-md": ["16px", { "lineHeight": "22px", "letterSpacing": "0.05em", "fontWeight": "600" }],
-        "display-lg-mobile": ["51px", { "lineHeight": "58px", "fontWeight": "700" }],
-        "display-lg": ["77px", { "lineHeight": "83px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
-        "body-md": ["21px", { "lineHeight": "29px", "fontWeight": "400" }]
+        // Utility scale (pixel-precise)
+        "xs":   ["14px", { lineHeight: "20px" }],           // Small — 14px all
+        "sm":   ["16px", { lineHeight: "24px" }],           // Small desktop — 16px
+        "base": ["18px", { lineHeight: "28px" }],           // Body — 18px desktop
+        "lg":   ["20px", { lineHeight: "30px" }],           // Body Large tablet
+        "xl":   ["22px", { lineHeight: "32px" }],           // Body Large desktop
+        "2xl":  ["24px", { lineHeight: "34px" }],           // H3 mobile — 24px
+        "3xl":  ["28px", { lineHeight: "38px" }],           // H3 desktop — 28px
+        "4xl":  ["32px", { lineHeight: "42px" }],           // H2 mobile — 32px
+        "5xl":  ["48px", { lineHeight: "56px" }],           // H2 desktop — 48px
+        "6xl":  ["72px", { lineHeight: "78px", letterSpacing: "-0.02em" }], // H1 desktop — 72px
+
+        // Named semantic tokens
+        "headline-lg":      ["48px", { lineHeight: "56px", fontWeight: "700" }],           // H2 desktop
+        "headline-md":      ["32px", { lineHeight: "40px", fontWeight: "700" }],           // H2 mobile / H3 large
+        "body-lg":          ["20px", { lineHeight: "30px", fontWeight: "400" }],           // Body Large
+        "label-md":         ["16px", { lineHeight: "22px", letterSpacing: "0.05em", fontWeight: "600" }], // Label / Small
+        "display-lg-mobile":["44px", { lineHeight: "52px", fontWeight: "700" }],           // H1 mobile
+        "display-lg":       ["72px", { lineHeight: "78px", letterSpacing: "-0.02em", fontWeight: "700" }], // H1 desktop
+        "body-md":          ["18px", { lineHeight: "28px", fontWeight: "400" }]            // Body
       },
       keyframes: {
         "scroll-up": {

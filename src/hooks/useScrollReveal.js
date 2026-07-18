@@ -52,6 +52,7 @@ export function useScrollReveal(dependency) {
 
     return () => {
       elements.forEach(el => observer.unobserve(el));
+      observer.disconnect();
     };
   }, [dependency]);
 }

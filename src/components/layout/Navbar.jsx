@@ -28,11 +28,14 @@ export default function Navbar() {
 
   // Silent background request to wake up the Render server
   const wakeUpBackend = () => {
-    fetch(`${import.meta.env.VITE_API_URL || ''}/api/ping`).catch(() => {});
+    fetch(`${import.meta.env.VITE_API_URL || ''}/api/ping`).catch(() => { });
   };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 h-24 md:h-28 w-full px-4 py-2 md:py-3">
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-primary text-white p-3 rounded-xl z-[100] outline-none ring-2 ring-white">
+        Skip to content
+      </a>
       <nav className="glass-panel flex justify-between items-center px-6 md:px-8 w-full h-full rounded-2xl relative">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-3 md:gap-4">
@@ -63,7 +66,7 @@ export default function Navbar() {
             className="bg-gradient-to-r from-primary to-amber-600 hover:from-amber-600 hover:to-primary text-white text-xs font-bold uppercase tracking-widest px-5 py-2.5 rounded-xl flex items-center justify-center gap-1.5 shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5"
           >
             <span>Donate Now</span>
-            <span className="material-symbols-outlined text-sm leading-none">favorite</span>
+
           </Link>
         </div>
 

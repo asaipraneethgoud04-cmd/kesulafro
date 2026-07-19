@@ -82,7 +82,7 @@ export default function App() {
               </div>
 
               {/* Right Column: Loading Video */}
-              <div className="relative w-full h-[25vh] md:h-full order-1 md:order-2 flex items-center justify-center bg-[#faf8f5]">
+              <div className="relative w-full h-[40vh] md:h-full order-1 md:order-2 flex items-center justify-center bg-[#faf8f5]">
                 <video
                   ref={(el) => {
                     if (el) el.playbackRate = 2.0;
@@ -92,7 +92,7 @@ export default function App() {
                   muted
                   playsInline
                   loop
-                  className="w-full h-full object-cover md:object-contain"
+                  className="w-full h-full object-contain"
                 >
                   <source src="/videos/loading.webm" type="video/webm" />
                 </video>

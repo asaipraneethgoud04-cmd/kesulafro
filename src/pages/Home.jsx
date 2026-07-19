@@ -119,8 +119,8 @@ export default function Home() {
 
       {/* HeroSection */}
       <section className="relative min-h-[100svh] md:h-screen flex items-end pb-16 md:pb-24 z-10 reveal overflow-hidden">
-        {/* Background Video */}
-        <div className="absolute inset-0 w-full h-full z-0">
+        {/* Background Video (Desktop) */}
+        <div className="absolute inset-0 w-full h-full z-0 hidden md:block">
           <video
             autoPlay
             loop
@@ -131,6 +131,21 @@ export default function Home() {
             className="w-full h-full object-cover"
           >
             <source src="/videos/hero.mp4" type="video/mp4" />
+          </video>
+        </div>
+
+        {/* Background Video (Mobile) */}
+        <div className="absolute inset-0 w-full h-full z-0 block md:hidden">
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="auto"
+            poster="/images/nature_bg.webp"
+            className="w-full h-full object-cover"
+          >
+            <source src="/videos/hero m.mp4" type="video/mp4" />
           </video>
         </div>
 

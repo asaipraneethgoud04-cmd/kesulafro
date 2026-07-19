@@ -33,8 +33,8 @@ export default function About() {
       <section className="py-section-gap relative z-10 reveal overflow-hidden">
         <img src="/images/tribal_2.webp" className="absolute top-0 right-0 w-[600px] opacity-[0.35] mix-blend-multiply pointer-events-none animate-float-delayed z-20" alt="" />
         <div className="max-w-container mx-auto px-gutter relative z-10">
-          <div className="grid md:grid-cols-12 gap-16 items-center">
-            <div className="md:col-span-5 relative">
+          <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+            <div className="lg:col-span-5 relative">
               <div>
                 <h2 className="text-4xl md:text-5xl font-bold mb-6 tracking-tight">How Kesula Began</h2>
                 <p className="font-body-md text-on-surface-variant mb-6 leading-relaxed font-light">
@@ -61,7 +61,7 @@ export default function About() {
             </div>
 
             {/* Visual Grid as Glass Frames */}
-            <div className="md:col-span-7 grid grid-cols-2 gap-6">
+            <div className="lg:col-span-7 grid grid-cols-2 gap-4 sm:gap-6 mt-8 lg:mt-0">
               <div className="space-y-6 pt-12">
                 <div className="aspect-[3/4] rounded-3xl overflow-hidden glass-panel p-2 shadow-md hover:scale-[1.02] transition-transform duration-300">
                   <img className="w-full h-full object-cover rounded-2xl" alt="Tribal Gathering"
@@ -148,7 +148,7 @@ export default function About() {
       <section className="py-section-gap relative z-10 reveal overflow-hidden">
         <img src="/images/tribal_1.webp" className="absolute top-1/2 -translate-y-1/2 left-[-150px] w-[550px] h-[550px] opacity-[0.35] mix-blend-multiply pointer-events-none object-contain z-20 animate-spin-vertical-centered" alt="" />
         <div className="max-w-container mx-auto px-gutter relative z-10">
-          <div className="grid md:grid-cols-2 gap-12">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
             {/* Vision Card */}
             <div className="glass-panel p-10 rounded-3xl border border-white/40 shadow-sm hover:scale-[1.01] transition-transform duration-300 flex flex-col items-start">
               <div className="w-12 h-12 clay-card-colored flex items-center justify-center mb-6 text-primary shadow-inner">

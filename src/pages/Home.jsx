@@ -118,7 +118,7 @@ export default function Home() {
       <div className="absolute bottom-[20%] right-[-10%] w-[45vw] h-[45vw] rounded-full blur-[140px] opacity-[0.08] bg-secondary pointer-events-none z-0 animate-float"></div>
 
       {/* HeroSection */}
-      <section className="relative h-screen flex items-end pb-24 z-10 reveal overflow-hidden">
+      <section className="relative min-h-[100svh] md:h-screen flex items-end pb-16 md:pb-24 z-10 reveal overflow-hidden">
         {/* Background Video */}
         <div className="absolute inset-0 w-full h-full z-0">
           <video
@@ -142,7 +142,7 @@ export default function Home() {
               Building Futures.
             </h1>
             <p className="text-base md:text-lg text-white max-w-xl mb-10 leading-relaxed font-medium text-shadow-md">
-              We walk alongside tribal and rural communities — helping with schools, health camps, jobs, and keeping their traditions alive. That's what Kesula Trust is about.
+              We walk alongside tribal and rural communities, helping with schools, health camps, jobs, and keeping their traditions alive. That's what Kesula Trust is about.
             </p>
             <div className="flex flex-wrap gap-4">
               <Link to="/contact#donate" className="clay-btn clay-btn-primary px-12 py-5 text-base uppercase tracking-wider text-center inline-block">
@@ -161,7 +161,7 @@ export default function Home() {
       </section>
 
       {/* About Preview */}
-      <section className="py-section-gap pb-[360px] md:pb-[280px] relative z-10 overflow-hidden bg-cover bg-center bg-fixed" style={{ backgroundImage: "url('/images/nature_bg.webp')" }}>
+      <section className="py-section-gap relative z-10 overflow-hidden bg-cover bg-center bg-fixed" style={{ backgroundImage: "url('/images/nature_bg.webp')" }}>
         {/* Dark overlay for text readability */}
         <div className="absolute inset-0 bg-black/70 z-0 pointer-events-none"></div>
         <div className="relative z-10 max-w-container mx-auto px-gutter grid md:grid-cols-2 gap-16 items-center">
@@ -200,12 +200,17 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Focus Areas - Arched Cards */}
-      <div className="relative z-30 w-full md:h-0">
-        <div className="md:absolute w-full top-0 left-0 md:transform md:-translate-y-1/2 pointer-events-none -mt-8 md:mt-0">
-          <div className="max-w-container mx-auto px-gutter relative z-10 pointer-events-auto">
-            <div className="grid md:grid-cols-2 gap-8">
-              <TiltCard elementType={Link} to="/about" className="bg-[#fff1ec] p-8 rounded-3xl border-2 !border-[#8a3004] shadow-sm transition-all duration-300 group block relative overflow-hidden reveal-top">
+      {/* Focus Areas & What We Do Section - With Image Background */}
+      <section className="relative z-10 overflow-hidden bg-cover bg-center bg-fixed" style={{ backgroundImage: "url('/images/artisan_bg.webp')" }}>
+        {/* Dark overlay for text readability */}
+        <div className="absolute inset-0 bg-black/60 z-0"></div>
+
+        {/* Focus Areas - Arched Cards */}
+        <div className="relative z-30 w-full pt-16 md:pt-24">
+          <div className="max-w-container mx-auto px-4 md:px-gutter relative z-10 pointer-events-auto">
+            {/* Horizontal scroll on mobile, grid on desktop */}
+            <div className="flex overflow-x-auto md:grid md:grid-cols-2 gap-5 md:gap-8 snap-x snap-mandatory scrollbar-none -mx-4 px-4 md:mx-0 md:px-0">
+              <TiltCard elementType={Link} to="/about" className="min-w-[85vw] md:min-w-0 snap-center bg-[#fff1ec] p-8 rounded-3xl border-2 !border-[#8a3004] shadow-sm transition-all duration-300 group block relative overflow-hidden reveal-top">
                 <div className="absolute -bottom-16 -right-16 w-72 h-72 opacity-[0.40] mix-blend-multiply pointer-events-none transition-transform duration-700 group-hover:scale-110 z-0">
                   <img src="/images/tribal_2.webp" loading="lazy" className="w-full h-full object-contain animate-spin-clockwise" alt="" />
                 </div>
@@ -224,7 +229,7 @@ export default function Home() {
                 </div>
               </TiltCard>
 
-              <TiltCard elementType={Link} to="/about" className="bg-[#fff1ec] p-8 rounded-3xl border-2 !border-[#8a3004] shadow-sm transition-all duration-300 group block relative overflow-hidden reveal-bottom">
+              <TiltCard elementType={Link} to="/about" className="min-w-[85vw] md:min-w-0 snap-center bg-[#fff1ec] p-8 rounded-3xl border-2 !border-[#8a3004] shadow-sm transition-all duration-300 group block relative overflow-hidden reveal-bottom">
                 <div className="absolute -bottom-16 -right-16 w-72 h-72 opacity-[0.40] mix-blend-multiply pointer-events-none transition-transform duration-700 group-hover:scale-110 z-0">
                   <img src="/images/tribal_2.webp" loading="lazy" className="w-full h-full object-contain animate-spin-clockwise" alt="" />
                 </div>
@@ -245,13 +250,8 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Stats - Minimalist line art */}
-      <section className="pt-44 md:pt-[300px] pb-44 relative z-10 overflow-hidden bg-cover bg-center bg-fixed" style={{ backgroundImage: "url('/images/artisan_bg.webp')" }}>
-        {/* Dark overlay for text readability */}
-        <div className="absolute inset-0 bg-black/60 z-0"></div>
-        <div className="relative z-10 max-w-container mx-auto px-gutter">
+        <div className="relative z-10 max-w-container mx-auto px-gutter pt-20 md:pt-32 pb-32 md:pb-44">
           <div className="text-center mb-16 reveal-top">
             <span className="text-white text-shadow-md font-extrabold text-xs uppercase tracking-[0.2em] block mb-3">Our Work</span>
             <h2 className="text-4xl md:text-5xl font-bold text-white text-shadow-lg mb-4">What We Do</h2>
@@ -259,7 +259,7 @@ export default function Home() {
               We go where the roads end. We sit with families, listen to what they actually need, and then we build it together — schools, health camps, farming support, and cultural programmes. No jargon, just honest work.
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 reveal-bottom">
+          <div className="flex overflow-x-auto md:grid md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-8 pb-8 md:pb-0 snap-x snap-mandatory scrollbar-none -mx-4 px-4 md:mx-0 md:px-0 reveal-bottom">
             {[
               { id: 'education', name: 'Education & Skill Development', icon: 'school' },
               { id: 'healthcare', name: 'Healthcare & Wellness', icon: 'medication' },
@@ -268,7 +268,7 @@ export default function Home() {
               { id: 'environment', name: 'Environment & Sustainability', icon: 'eco' },
               { id: 'culture', name: 'Culture, Community & Animal Welfare', icon: 'brush' }
             ].map(activity => (
-              <Link to="/activities" key={activity.id} className="group relative rounded-2xl overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl block">
+              <Link to="/activities" key={activity.id} className="min-w-[85vw] md:min-w-0 snap-center flex-shrink-0 group relative rounded-2xl overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl block">
                 {/* Card Background (Turns pure white on hover) */}
                 <div className="absolute inset-0 bg-black/70 backdrop-blur-xl border border-white/[0.15] rounded-2xl transition-all duration-500 group-hover:bg-white group-hover:border-white"></div>
                 {/* Animated bottom accent line */}
@@ -446,7 +446,7 @@ export default function Home() {
       </section>
 
       {/* CTA Banner - Premium Glassmorphic Overlay over Dark Background */}
-      <section className="max-w-container mx-auto px-gutter mb-44 relative z-10 reveal">
+      <section className="max-w-container mx-auto px-gutter mb-16 md:mb-24 relative z-10 reveal">
         <div className="rounded-3xl p-12 md:p-16 border border-white/10 shadow-2xl relative overflow-hidden text-center text-white bg-cover bg-center" style={{ backgroundImage: "url('/images/be.webp')" }}>
           {/* Dark overlay for text readability */}
           <div className="absolute inset-0 bg-black/50 z-0 pointer-events-none"></div>

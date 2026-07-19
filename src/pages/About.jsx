@@ -15,7 +15,7 @@ export default function About() {
       <div className="absolute bottom-[10%] left-[-10%] w-[50vw] h-[50vw] rounded-full blur-[140px] opacity-[0.06] bg-primary pointer-events-none z-0"></div>
 
       {/* Hero Section */}
-      <section className="relative min-h-[800px] flex items-center justify-center pt-32 pb-20 md:pt-48 md:pb-24 z-10 reveal overflow-hidden bg-cover bg-center bg-fixed" style={{ backgroundImage: "url('/images/contact1.webp')" }}>
+      <section className="relative min-h-[500px] md:min-h-[600px] lg:min-h-[800px] flex items-center justify-center pt-32 pb-20 md:pt-48 md:pb-24 z-10 reveal overflow-hidden bg-cover bg-center bg-fixed" style={{ backgroundImage: "url('/images/contact1.webp')" }}>
         <div className="absolute inset-0 bg-black/60 z-0 pointer-events-none"></div>
         <div className="max-w-container mx-auto px-gutter text-center relative z-10 w-full">
           <span className="text-white font-extrabold text-xs uppercase tracking-[0.25em] block mb-3 text-shadow-md">Who We Are</span>

@@ -102,7 +102,7 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      <Router>
+      <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <Suspense fallback={<PageSkeleton />}>
           <Routes>
             {/* Public Routes */}

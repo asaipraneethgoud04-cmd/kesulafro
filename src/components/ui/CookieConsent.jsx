@@ -4,20 +4,33 @@ import { Link } from 'react-router-dom';
 export default function CookieConsent() {
   const [show, setShow] = useState(false);
 
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+    return null;
+  };
+
+  const setCookie = (name, value, days) => {
+    const date = new Date();
+    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+    document.cookie = `${name}=${value};expires=${date.toUTCString()};path=/`;
+  };
+
   useEffect(() => {
-    const consent = localStorage.getItem('kesula_cookie_consent');
+    const consent = getCookie('kesula_cookie_consent');
     if (!consent) {
       setShow(true);
     }
   }, []);
 
   const handleAccept = () => {
-    localStorage.setItem('kesula_cookie_consent', 'accepted');
+    setCookie('kesula_cookie_consent', 'accepted', 365);
     setShow(false);
   };
 
   const handleDecline = () => {
-    localStorage.setItem('kesula_cookie_consent', 'declined');
+    setCookie('kesula_cookie_consent', 'declined', 365);
     setShow(false);
   };
 

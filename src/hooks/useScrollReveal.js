@@ -10,11 +10,11 @@ export function useScrollReveal(dependency) {
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          entry.target.classList.add('opacity-100', 'translate-y-0', 'translate-x-0');
-          entry.target.classList.remove('opacity-0', 'translate-y-12', '-translate-y-12', 'translate-x-12', '-translate-x-12');
+          entry.target.classList.add('opacity-100', 'translate-y-0', 'translate-x-0', 'scale-100');
+          entry.target.classList.remove('opacity-0', 'translate-y-12', '-translate-y-12', 'translate-x-12', '-translate-x-12', 'scale-95');
         } else {
           // Reset classes when element leaves the viewport so the animation triggers every time
-          entry.target.classList.remove('opacity-100', 'translate-y-0', 'translate-x-0');
+          entry.target.classList.remove('opacity-100', 'translate-y-0', 'translate-x-0', 'scale-100');
           entry.target.classList.add('opacity-0');
           
           if (entry.target.classList.contains('reveal-left')) {
@@ -25,7 +25,7 @@ export function useScrollReveal(dependency) {
             entry.target.classList.add('-translate-y-12');
           } else {
             // Default reveal or reveal-bottom
-            entry.target.classList.add('translate-y-12');
+            entry.target.classList.add('translate-y-12', 'scale-95');
           }
         }
       });
@@ -44,7 +44,7 @@ export function useScrollReveal(dependency) {
         } else if (el.classList.contains('reveal-top')) {
           el.classList.add('-translate-y-12');
         } else { // reveal or reveal-bottom
-          el.classList.add('translate-y-12');
+          el.classList.add('translate-y-12', 'scale-95');
         }
       }
       observer.observe(el);

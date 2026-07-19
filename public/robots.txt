@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://kesulatrust.org/sitemap.xml
+Sitemap: https://www.kesulatrust.org/sitemap.xml

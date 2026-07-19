@@ -241,7 +241,7 @@ export default function Activities() {
       <div className="absolute bottom-[20%] right-[-15%] w-[60vw] h-[60vw] rounded-full blur-[180px] opacity-10 bg-gradient-to-br from-[#c5a880]/30 to-transparent pointer-events-none z-0"></div>
 
       {/* Cinematic Parallax Hero Section */}
-      <section ref={heroRef} className="relative h-[90vh] min-h-[650px] flex items-center justify-center z-10 overflow-hidden bg-[#eae6e1]">
+      <section ref={heroRef} className="relative h-[100svh] md:h-[90vh] min-h-[500px] md:min-h-[650px] flex items-center justify-center z-10 overflow-hidden bg-[#eae6e1]">
         <motion.div style={{ y: heroBgY }} className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-white/20 z-10 pointer-events-none"></div>
           <div className="absolute inset-0 bg-gradient-to-t from-[#faf8f5] via-white/5 to-white/40 z-10 pointer-events-none"></div>

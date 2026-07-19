@@ -232,7 +232,7 @@ export default function Contact() {
       <div className="absolute bottom-[5%] left-[-10%] w-[45vw] h-[45vw] rounded-full blur-[130px] opacity-[0.05] bg-primary pointer-events-none z-0"></div>
 
       {/* Hero Header */}
-      <section className="relative min-h-[800px] flex items-center justify-center pt-32 pb-20 md:pt-48 md:pb-24 overflow-hidden z-10 reveal bg-cover bg-center bg-fixed" style={{ backgroundImage: "url('/images/contact.webp')" }}>
+      <section className="relative min-h-[500px] md:min-h-[600px] lg:min-h-[800px] flex items-center justify-center pt-32 pb-20 md:pt-48 md:pb-24 overflow-hidden z-10 reveal bg-cover bg-center bg-fixed" style={{ backgroundImage: "url('/images/contact2.webp')" }}>
         <div className="absolute inset-0 bg-black/60 z-0 pointer-events-none"></div>
         <div className="relative z-10 text-center text-white px-gutter max-w-2xl mx-auto w-full">
           <span className="text-white font-extrabold text-xs uppercase tracking-[0.25em] block mb-3 text-shadow-md">Reach Out</span>
@@ -242,14 +242,14 @@ export default function Contact() {
       </section>
 
       {/* Main Grid: Details + Contact Form */}
-      <section className="py-20 max-w-container mx-auto px-gutter relative z-10 reveal overflow-hidden">
+      <section className="py-12 md:py-20 max-w-container mx-auto px-4 md:px-gutter relative z-10 reveal overflow-hidden">
         <img src="/images/tribal_3.webp" className="absolute top-[30%] -translate-y-1/2 right-[-150px] w-[550px] h-[550px] opacity-[0.35] mix-blend-multiply pointer-events-none object-contain z-0 animate-spin-vertical-centered" alt="" />
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start relative z-10">
 
           {/* Details column — Premium Card */}
           <div className="lg:col-span-5 space-y-0">
             {/* Address Card */}
-            <div className="bg-white rounded-t-[32px] p-8 pb-7 border border-slate-100 shadow-[0_4px_40px_rgba(138,48,4,0.06)]">
+            <div className="bg-white rounded-t-[24px] md:rounded-t-[32px] p-6 md:p-8 pb-7 border border-slate-100 shadow-[0_4px_40px_rgba(138,48,4,0.06)]">
               <div className="flex items-center gap-3 mb-5">
                 <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#8a3004] to-[#c5621a] flex items-center justify-center shadow-md">
                   <span className="material-symbols-outlined text-white text-xl">location_on</span>
@@ -262,7 +262,7 @@ export default function Contact() {
             </div>
             
             {/* Contact Info Card */}
-            <div className="bg-[#faf8f5] px-8 py-7 border-x border-slate-100 space-y-5">
+            <div className="bg-[#faf8f5] px-6 md:px-8 py-7 border-x border-slate-100 space-y-5">
               {[
                 { icon: 'call', label: 'Mobile', value: '+91 79012 46256' },
                 { icon: 'mail', label: 'Email', value: 'kesulatrust@gmail.com' },
@@ -281,7 +281,7 @@ export default function Contact() {
             </div>
 
             {/* Registration Card */}
-            <div className="bg-white rounded-b-[32px] px-8 py-7 border border-slate-100 shadow-[0_4px_40px_rgba(138,48,4,0.06)]">
+            <div className="bg-white rounded-b-[24px] md:rounded-b-[32px] px-6 md:px-8 py-7 border border-slate-100 shadow-[0_4px_40px_rgba(138,48,4,0.06)]">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#8a3004] to-[#c5621a] flex items-center justify-center shadow-md">
                   <span className="material-symbols-outlined text-white text-xl">verified</span>
@@ -305,7 +305,7 @@ export default function Contact() {
           </div>
 
           {/* Contact Form Column — Premium Elevated Card */}
-          <div className="lg:col-span-7 bg-white rounded-[32px] p-8 md:p-10 border border-slate-100 shadow-[0_8px_60px_rgba(138,48,4,0.08)] relative overflow-hidden">
+          <div className="lg:col-span-7 bg-white rounded-[24px] md:rounded-[32px] p-6 md:p-10 border border-slate-100 shadow-[0_8px_60px_rgba(138,48,4,0.08)] relative overflow-hidden">
             {/* Decorative corner glow */}
             <div className="absolute -top-20 -right-20 w-40 h-40 rounded-full bg-[#8a3004]/5 blur-3xl pointer-events-none"></div>
             <div className="absolute -bottom-20 -left-20 w-40 h-40 rounded-full bg-amber-500/5 blur-3xl pointer-events-none"></div>
@@ -340,30 +340,31 @@ export default function Contact() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div className="flex flex-col gap-2">
                     <label htmlFor="contact-name" className="text-sm font-bold text-slate-700 flex items-center gap-1.5"><span className="material-symbols-outlined text-[15px] text-[#8a3004]">person</span>Your Name <span className="text-red-400">*</span></label>
-                    <input id="contact-name" type="text" autoComplete="name" aria-required="true" value={contactForm.name} onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-[15px] text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-[#8a3004] focus:ring-2 focus:ring-2 focus:ring-[#8a3004] focus:ring-offset-1 focus:outline-none transition-all duration-200" placeholder="Your full name" required />
+                    <input id="contact-name" type="text" autoComplete="name" aria-required="true" value={contactForm.name} onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-base text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-[#8a3004] focus:ring-2 focus:ring-2 focus:ring-[#8a3004] focus:ring-offset-1 focus:outline-none transition-all duration-200" placeholder="Your full name" required />
                   </div>
                   <div className="flex flex-col gap-2">
                     <label htmlFor="contact-email" className="text-sm font-bold text-slate-700 flex items-center gap-1.5"><span className="material-symbols-outlined text-[15px] text-[#8a3004]">mail</span>Email <span className="text-red-400">*</span></label>
-                    <input id="contact-email" type="email" autoComplete="email" aria-required="true" value={contactForm.email} onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-[15px] text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-[#8a3004] focus:ring-2 focus:ring-2 focus:ring-[#8a3004] focus:ring-offset-1 focus:outline-none transition-all duration-200" placeholder="you@example.com" required />
+                    <input id="contact-email" type="email" autoComplete="email" aria-required="true" value={contactForm.email} onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-base text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-[#8a3004] focus:ring-2 focus:ring-2 focus:ring-[#8a3004] focus:ring-offset-1 focus:outline-none transition-all duration-200" placeholder="you@example.com" required />
                   </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div className="flex flex-col gap-2">
                     <label htmlFor="contact-phone" className="text-sm font-bold text-slate-700 flex items-center gap-1.5"><span className="material-symbols-outlined text-[15px] text-[#8a3004]">call</span>Phone</label>
-                    <input id="contact-phone" type="tel" autoComplete="tel" value={contactForm.phone} onChange={(e) => setContactForm({ ...contactForm, phone: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-[15px] text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-[#8a3004] focus:ring-2 focus:ring-2 focus:ring-[#8a3004] focus:ring-offset-1 focus:outline-none transition-all duration-200" placeholder="+91 XXXXX XXXXX" />
+                    <input id="contact-phone" type="tel" autoComplete="tel" value={contactForm.phone} onChange={(e) => setContactForm({ ...contactForm, phone: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-base text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-[#8a3004] focus:ring-2 focus:ring-2 focus:ring-[#8a3004] focus:ring-offset-1 focus:outline-none transition-all duration-200" placeholder="+91 XXXXX XXXXX" />
                   </div>
                   <div className="flex flex-col gap-2">
                     <label htmlFor="contact-subject" className="text-sm font-bold text-slate-700 flex items-center gap-1.5"><span className="material-symbols-outlined text-[15px] text-[#8a3004]">category</span>Enquiry Type <span className="text-red-400">*</span></label>
-                    <select id="contact-subject" aria-required="true" value={contactForm.subject} onChange={(e) => setContactForm({ ...contactForm, subject: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-[15px] text-slate-900 focus:bg-white focus:border-[#8a3004] focus:ring-2 focus:ring-2 focus:ring-[#8a3004] focus:ring-offset-1 focus:outline-none transition-all duration-200 appearance-none cursor-pointer">
+                    <select id="contact-subject" aria-required="true" value={contactForm.subject} onChange={(e) => setContactForm({ ...contactForm, subject: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-base text-slate-900 focus:bg-white focus:border-[#8a3004] focus:ring-2 focus:ring-2 focus:ring-[#8a3004] focus:ring-offset-1 focus:outline-none transition-all duration-200 appearance-none cursor-pointer">
                       <option value="general">General Enquiry</option>
                       <option value="donate">Donation Enquiry</option>
                       <option value="volunteer">Volunteer Enquiry</option>
+                      <option value="other">Other</option>
                     </select>
                   </div>
                 </div>
                 <div className="flex flex-col gap-2">
                   <label htmlFor="contact-message" className="text-sm font-bold text-slate-700 flex items-center gap-1.5"><span className="material-symbols-outlined text-[15px] text-[#8a3004]">chat</span>Message <span className="text-red-400">*</span></label>
-                  <textarea id="contact-message" rows="5" aria-required="true" value={contactForm.message} onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-[15px] text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-[#8a3004] focus:ring-2 focus:ring-2 focus:ring-[#8a3004] focus:ring-offset-1 focus:outline-none transition-all duration-200 resize-none" placeholder="Tell us how we can help..." required></textarea>
+                  <textarea id="contact-message" aria-required="true" value={contactForm.message} onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })} rows="4" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-base text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-[#8a3004] focus:ring-2 focus:ring-2 focus:ring-[#8a3004] focus:ring-offset-1 focus:outline-none transition-all duration-200 resize-none" placeholder="How can we help you?" required></textarea>
                 </div>
                 <button type="submit" disabled={isContactSubmitting} className="w-full bg-gradient-to-r from-[#8a3004] to-[#b5470a] hover:from-[#a03c08] hover:to-[#c55010] text-white font-bold text-sm uppercase tracking-[0.15em] px-8 py-4.5 rounded-2xl flex justify-center items-center gap-2.5 transition-all duration-300 transform hover:-translate-y-0.5 hover:shadow-xl hover:shadow-[#8a3004]/20 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none">
                   {isContactSubmitting ? (<><span className="material-symbols-outlined animate-spin text-lg">autorenew</span>Sending...</>) : (<><span className="material-symbols-outlined text-lg">send</span>Submit Enquiry</>)}

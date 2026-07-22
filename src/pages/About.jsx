@@ -187,7 +187,7 @@ export default function About() {
             <div className="md:col-span-4 flex flex-col items-center">
               <div className="w-64 h-64 sm:w-72 sm:h-72 rounded-3xl overflow-hidden border-4 border-white shadow-md mb-6 p-1 bg-white/40 backdrop-blur-md">
                 <img className="w-full h-full object-cover rounded-2xl" alt="Founder Manzeelal Dharavath"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuB72WIaWrJI76th6mrzTvf1_1giOAZhXQ-Djgbbcd-xYDlkwXN47lseP_FJInUf39XgXA0yqzaQSN4agVgGxm_gN5ZNeOY1dB5SiSvYcTN7AVuZuK78yMB2FElY1DaACvmTX_Noy7HoEAR3Dpn5WMak-WAK8sgql-NqNzG9pGqBPxQGcvrCqFNpN_FFwQirKLYkyC2LFtncR_wrVWuu6MpJEn5oJ16mAJ4mKyFiI-ALSRqrTf5HwZJDDgj1s0qJ2BfVAvPJO_SUugA" />
+                  src="/images/manzelal.webp" />
               </div>
               <h3 className="text-2xl font-bold text-on-surface text-center tracking-tight">Manzeelal Dharavath</h3>
               <p className="text-[15px] text-secondary font-bold uppercase tracking-widest text-center mt-2.5">Founder &amp; Managing Trustee</p>

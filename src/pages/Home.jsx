@@ -8,14 +8,16 @@ import { supabase } from '../lib/supabase';
 
 export default function Home() {
   const [upcomingEvents, setUpcomingEvents] = useState([]);
+  const [featuredEvents, setFeaturedEvents] = useState([]);
   const [activeTab, setActiveTab] = useState('milestones');
   const [selectedMedia, setSelectedMedia] = useState(null);
-  const carouselRef = useRef(null);
+  const upcomingCarouselRef = useRef(null);
+  const featuredCarouselRef = useRef(null);
 
-  const scrollCarousel = (direction) => {
-    if (carouselRef.current) {
+  const scrollCarousel = (direction, ref) => {
+    if (ref && ref.current) {
       const scrollAmount = 360;
-      carouselRef.current.scrollBy({
+      ref.current.scrollBy({
         left: direction === 'left' ? -scrollAmount : scrollAmount,
         behavior: 'smooth'
       });
@@ -51,20 +53,28 @@ export default function Home() {
           console.error('Error fetching upcoming events:', error);
         } else if (data) {
           const todayStr = new Date().toISOString().split('T')[0];
+          
           const upcoming = data.filter(e => e.status === 'upcoming' && (!e.date || e.date >= todayStr));
+          const featured = data.filter(e => e.featured === true || e.featured === 1);
+          
           setUpcomingEvents(upcoming);
+          setFeaturedEvents(featured);
         }
       });
 
     // Fetch latest gallery images from Supabase
     supabase.from('gallery')
-      .select('id, imageUrl, gridShape')
+      .select('*')
       .order('createdAt', { ascending: true })
       .then(({ data, error }) => {
         if (error) {
           console.error('Could not load latest gallery items', error);
         } else if (data && data.length > 0) {
-          const formatted = data.map(item => ({ image: item.imageUrl, text: '' }));
+          const formatted = data.map(item => ({ 
+            image: item.imageUrl, 
+            text: '',
+            objectPosition: item.objectPosition 
+          }));
           // Keep all images (both initial static and fetched from Supabase)
           setGalleryImages(prev => {
             // Prevent duplicates if component re-mounts
@@ -216,7 +226,7 @@ export default function Home() {
       </section>
 
       {/* Focus Areas & What We Do Section - With Image Background */}
-      <section className="relative z-10 overflow-hidden bg-cover bg-center bg-fixed" style={{ backgroundImage: "url('/images/artisan_bg.webp')" }}>
+      <section className="relative z-10 overflow-hidden bg-cover bg-center bg-fixed" style={{ backgroundImage: "url('/images/bg.webp')" }}>
         {/* Dark overlay for text readability */}
         <div className="absolute inset-0 bg-black/60 z-0"></div>
 
@@ -336,107 +346,118 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Upcoming Events Preview Section */}
-      {upcomingEvents.length > 0 && (
-        <section className="py-44 relative z-10 overflow-hidden bg-white/80 backdrop-blur-sm border-t border-white/50">
-          {/* Zig-Zag Tribal Art (Right) */}
-          <img src="/images/tribal_2.webp" loading="lazy" className="absolute top-1/2 -translate-y-1/2 right-0 w-[650px] h-[650px] opacity-[0.40] mix-blend-multiply pointer-events-none object-contain animate-spin-vertical-centered" alt="" />
-          <div className="max-w-container mx-auto px-gutter">
-            <div className="flex items-center justify-between gap-4 mb-10 reveal-top">
-              <h2 className="text-4xl md:text-5xl font-extrabold text-primary">Upcoming Events</h2>
-              <div className="flex items-center gap-3 flex-1 justify-end">
-                {upcomingEvents.length > 3 && (
-                  <div className="flex gap-2">
-                    <button 
-                      onClick={() => scrollCarousel('left')}
-                      className="w-10 h-10 rounded-full border border-secondary/15 flex items-center justify-center text-primary hover:bg-[#8a3004] hover:text-white transition-all shadow-sm focus:outline-none"
-                    >
-                      <span className="material-symbols-outlined text-xl">arrow_back</span>
-                    </button>
-                    <button 
-                      onClick={() => scrollCarousel('right')}
-                      className="w-10 h-10 rounded-full border border-secondary/15 flex items-center justify-center text-primary hover:bg-[#8a3004] hover:text-white transition-all shadow-sm focus:outline-none"
-                    >
-                      <span className="material-symbols-outlined text-xl">arrow_forward</span>
-                    </button>
+      {/* Reusable Event Section Renderer */}
+      {(() => {
+        const renderEventSection = (events, title, ref) => {
+          if (events.length === 0) return null;
+          return (
+            <section className="py-24 relative z-10 overflow-hidden bg-white/80 backdrop-blur-sm border-t border-white/50">
+              <img src="/images/tribal_2.webp" loading="lazy" className="absolute top-1/2 -translate-y-1/2 right-0 w-[650px] h-[650px] opacity-[0.40] mix-blend-multiply pointer-events-none object-contain animate-spin-vertical-centered" alt="" />
+              <div className="max-w-container mx-auto px-gutter">
+                <div className="flex items-center justify-between gap-4 mb-10 reveal-top">
+                  <h2 className="text-4xl md:text-5xl font-extrabold text-primary">{title}</h2>
+                  <div className="flex items-center gap-3 flex-1 justify-end">
+                    {events.length > 3 && (
+                      <div className="flex gap-2">
+                        <button 
+                          onClick={() => scrollCarousel('left', ref)}
+                          className="w-10 h-10 rounded-full border border-secondary/15 flex items-center justify-center text-primary hover:bg-[#8a3004] hover:text-white transition-all shadow-sm focus:outline-none"
+                        >
+                          <span className="material-symbols-outlined text-xl">arrow_back</span>
+                        </button>
+                        <button 
+                          onClick={() => scrollCarousel('right', ref)}
+                          className="w-10 h-10 rounded-full border border-secondary/15 flex items-center justify-center text-primary hover:bg-[#8a3004] hover:text-white transition-all shadow-sm focus:outline-none"
+                        >
+                          <span className="material-symbols-outlined text-xl">arrow_forward</span>
+                        </button>
+                      </div>
+                    )}
+                    <div className="h-[1px] w-20 md:w-40 bg-secondary/15"></div>
+                  </div>
+                </div>
+
+                {events.length > 3 ? (
+                  <div 
+                    ref={ref}
+                    className="flex gap-6 overflow-x-auto pb-8 scrollbar-none scroll-smooth snap-x snap-mandatory"
+                  >
+                    {events.map((event) => {
+                      const eventDate = new Date(event.date);
+                      const day = eventDate.getDate();
+                      const month = eventDate.toLocaleString('default', { month: 'short' });
+                      return (
+                        <div key={event.id} className="snap-center min-w-[280px] sm:min-w-[340px] flex-shrink-0">
+                          <TiltCard className="flex flex-col justify-between p-6 glass-panel rounded-3xl border border-white/40 h-[220px] relative group">
+                            <div className="flex items-start gap-4 mb-6">
+                              <div className="clay-card-colored p-3 shadow-sm text-center border-t-2 border-accent min-w-[65px] h-[75px] flex flex-col justify-center rounded-xl bg-white/50">
+                                <span className="block text-2xl font-extrabold text-accent leading-none">{day || '15'}</span>
+                                <span className="text-xs font-bold uppercase opacity-60 text-accent mt-1">{month || 'Aug'}</span>
+                              </div>
+                              <div className="flex-1 min-w-0 text-left">
+                                <h6 className="font-headline-md text-lg font-bold text-on-surface leading-snug break-words line-clamp-2">{event.title}</h6>
+                                <p className="text-sm text-on-surface-variant flex items-center gap-1 mt-2 font-medium">
+                                  <span className="material-symbols-outlined text-base text-accent">location_on</span>
+                                  <span className="truncate">{event.location || 'Chengicherla, Telangana'}</span>
+                                </p>
+                              </div>
+                            </div>
+                            <div className="w-full mt-auto">
+                              <Link to="/activities" className="clay-btn clay-btn-accent w-full py-2.5 text-xs font-bold uppercase tracking-wider text-center block">
+                                Register
+                              </Link>
+                            </div>
+                          </TiltCard>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="grid md:grid-cols-3 gap-6 reveal-bottom">
+                    {events.map((event) => {
+                      const eventDate = new Date(event.date);
+                      const day = eventDate.getDate();
+                      const month = eventDate.toLocaleString('default', { month: 'short' });
+                      return (
+                        <TiltCard key={event.id} className="flex flex-col justify-between p-6 glass-panel rounded-3xl border border-white/40 h-full relative group">
+                          <div className="flex items-start gap-4 mb-6">
+                            <div className="clay-card-colored p-3 shadow-sm text-center border-t-2 border-accent min-w-[65px] h-[75px] flex flex-col justify-center rounded-xl bg-white/50">
+                              <span className="block text-2xl font-extrabold text-accent leading-none">{day || '15'}</span>
+                              <span className="text-xs font-bold uppercase opacity-60 text-accent mt-1">{month || 'Aug'}</span>
+                            </div>
+                            <div className="flex-1 min-w-0 text-left">
+                              <h6 className="font-headline-md text-lg font-bold text-on-surface leading-snug break-words line-clamp-2">{event.title}</h6>
+                              <p className="text-sm text-on-surface-variant flex items-center gap-1 mt-2 font-medium">
+                                <span className="material-symbols-outlined text-base text-accent">location_on</span>
+                                <span className="truncate">{event.location || 'Chengicherla, Telangana'}</span>
+                              </p>
+                            </div>
+                          </div>
+                          <div className="w-full mt-auto">
+                            <Link to="/activities" className="clay-btn clay-btn-accent w-full py-2.5 text-xs font-bold uppercase tracking-wider text-center block">
+                              Register
+                            </Link>
+                          </div>
+                        </TiltCard>
+                      );
+                    })}
                   </div>
                 )}
-                <div className="h-[1px] w-20 md:w-40 bg-secondary/15"></div>
               </div>
-            </div>
+            </section>
+          );
+        };
 
-            {upcomingEvents.length > 3 ? (
-              <div 
-                ref={carouselRef}
-                className="flex gap-6 overflow-x-auto pb-8 scrollbar-none scroll-smooth snap-x snap-mandatory"
-              >
-                {upcomingEvents.map((event) => {
-                  const eventDate = new Date(event.date);
-                  const day = eventDate.getDate();
-                  const month = eventDate.toLocaleString('default', { month: 'short' });
-                  return (
-                    <div key={event.id} className="snap-center min-w-[280px] sm:min-w-[340px] flex-shrink-0">
-                      <TiltCard className="flex flex-col justify-between p-6 glass-panel rounded-3xl border border-white/40 h-[220px] relative group">
-                        <div className="flex items-start gap-4 mb-6">
-                          <div className="clay-card-colored p-3 shadow-sm text-center border-t-2 border-accent min-w-[65px] h-[75px] flex flex-col justify-center rounded-xl bg-white/50">
-                            <span className="block text-2xl font-extrabold text-accent leading-none">{day || '15'}</span>
-                            <span className="text-xs font-bold uppercase opacity-60 text-accent mt-1">{month || 'Aug'}</span>
-                          </div>
-                          <div className="flex-1 min-w-0 text-left">
-                            <h6 className="font-headline-md text-lg font-bold text-on-surface leading-snug break-words line-clamp-2">{event.title}</h6>
-                            <p className="text-sm text-on-surface-variant flex items-center gap-1 mt-2 font-medium">
-                              <span className="material-symbols-outlined text-base text-accent">location_on</span>
-                              <span className="truncate">{event.location || 'Chengicherla, Telangana'}</span>
-                            </p>
-                          </div>
-                        </div>
-                        <div className="w-full mt-auto">
-                          <Link to="/activities" className="clay-btn clay-btn-accent w-full py-2.5 text-xs font-bold uppercase tracking-wider text-center block">
-                            Register
-                          </Link>
-                        </div>
-                      </TiltCard>
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="grid md:grid-cols-3 gap-6 reveal-bottom">
-                {upcomingEvents.map((event) => {
-                  const eventDate = new Date(event.date);
-                  const day = eventDate.getDate();
-                  const month = eventDate.toLocaleString('default', { month: 'short' });
-                  return (
-                    <TiltCard key={event.id} className="flex flex-col justify-between p-6 glass-panel rounded-3xl border border-white/40 h-full relative group">
-                      <div className="flex items-start gap-4 mb-6">
-                        <div className="clay-card-colored p-3 shadow-sm text-center border-t-2 border-accent min-w-[65px] h-[75px] flex flex-col justify-center rounded-xl bg-white/50">
-                          <span className="block text-2xl font-extrabold text-accent leading-none">{day || '15'}</span>
-                          <span className="text-xs font-bold uppercase opacity-60 text-accent mt-1">{month || 'Aug'}</span>
-                        </div>
-                        <div className="flex-1 min-w-0 text-left">
-                          <h6 className="font-headline-md text-lg font-bold text-on-surface leading-snug break-words line-clamp-2">{event.title}</h6>
-                          <p className="text-sm text-on-surface-variant flex items-center gap-1 mt-2 font-medium">
-                            <span className="material-symbols-outlined text-base text-accent">location_on</span>
-                            <span className="truncate">{event.location || 'Chengicherla, Telangana'}</span>
-                          </p>
-                        </div>
-                      </div>
-                      <div className="w-full mt-auto">
-                        <Link to="/activities" className="clay-btn clay-btn-accent w-full py-2.5 text-xs font-bold uppercase tracking-wider text-center block">
-                          Register
-                        </Link>
-                      </div>
-                    </TiltCard>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        </section>
-      )}
+        return (
+          <>
+            {renderEventSection(featuredEvents, 'Featured Events', featuredCarouselRef)}
+            {renderEventSection(upcomingEvents, 'Upcoming Events', upcomingCarouselRef)}
+          </>
+        );
+      })()}
 
       {/* Photo Gallery Section - Circular Animation */}
-      <section className="pt-44 pb-24 relative z-10 overflow-hidden bg-surface-container/30">
+      <section className="pt-16 md:pt-24 pb-24 relative z-10 overflow-hidden bg-surface-container/30">
         <img src="/images/rangoli_bg.webp" loading="lazy" className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] md:w-[800px] h-auto opacity-[0.25] mix-blend-multiply pointer-events-none object-contain z-0 animate-spin-centered" alt="" />
         <div className="max-w-container mx-auto px-gutter relative z-10">
           <div className="text-center mb-16 reveal-top">

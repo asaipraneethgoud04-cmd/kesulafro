@@ -7,23 +7,6 @@ export default function Gallery() {
   const [galleryImages, setGalleryImages] = useState([]);
   const observerRef = useRef(null);
 
-  const staticImages = [
-    { id: 'static-1', imageUrl: '/images/img1.webp' },
-    { id: 'static-5', imageUrl: '/images/img5.webp' },
-    { id: 'static-6', imageUrl: '/images/img6.webp' },
-    { id: 'static-7', imageUrl: '/images/img7.webp' },
-    { id: 'static-8', imageUrl: '/images/img8.webp' },
-    { id: 'static-9', imageUrl: '/images/img9.webp' },
-    { id: 'static-10', imageUrl: '/images/hs1.webp' },
-    { id: 'static-11', imageUrl: '/images/hs2.webp' },
-    { id: 'static-12', imageUrl: '/images/hs3.webp' },
-    { id: 'static-13', imageUrl: '/images/hs4.webp' },
-    { id: 'static-14', imageUrl: '/images/hs5.webp' },
-    { id: 'static-15', imageUrl: '/images/hs6.webp' },
-    { id: 'static-16', imageUrl: '/images/hs7.webp' },
-    { id: 'static-17', imageUrl: '/images/hs8.webp' },
-  ];
-
   const spanPattern = [
     'col-span-1 row-span-2',
     'col-span-1 row-span-2',
@@ -49,7 +32,7 @@ export default function Gallery() {
       });
   }, []);
 
-  const allImages = [...staticImages, ...galleryImages];
+  const allImages = galleryImages;
 
   useEffect(() => {
     if (allImages.length === 0) return;
@@ -110,6 +93,7 @@ export default function Gallery() {
                     src={img.imageUrl} 
                     alt="Gallery Moment" 
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    style={img.objectPosition ? { objectPosition: img.objectPosition } : {}}
                   />
                 </div>
               );

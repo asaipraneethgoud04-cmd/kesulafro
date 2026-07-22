@@ -4,7 +4,7 @@ export const galleryService = {
   async getGallery() {
     const { data, error } = await supabase
       .from('gallery')
-      .select('id, imageUrl, gridShape, createdAt')
+      .select('*')
       .order('createdAt', { ascending: true });
     if (error) throw error;
     return data;
@@ -14,6 +14,15 @@ export const galleryService = {
     const { data, error } = await supabase
       .from('gallery')
       .insert([imageData]);
+    if (error) throw error;
+    return data;
+  },
+
+  async updateImage(id, updateData) {
+    const { data, error } = await supabase
+      .from('gallery')
+      .update(updateData)
+      .eq('id', id);
     if (error) throw error;
     return data;
   },

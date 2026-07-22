@@ -50,14 +50,20 @@ export default function Contact() {
       return;
     }
 
-    const now = Date.now();
-    if (now - lastContactSubmit < 60000) {
-      setContactError('Please wait 60 seconds before submitting another enquiry.');
+    if (!contactForm.name || !contactForm.email || !contactForm.message) {
+      setContactError('Please fill out all required fields (Name, Email, and Message).');
       return;
     }
 
-    if (!contactForm.name || !contactForm.email || !contactForm.message) {
-      setContactError('Please fill out all required fields (Name, Email, and Message).');
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(contactForm.email)) {
+      setContactError('Please enter a valid email address.');
+      return;
+    }
+
+    const phoneRegex = /^\d{10}$/;
+    if (contactForm.phone && !phoneRegex.test(contactForm.phone)) {
+      setContactError('Please enter a valid 10-digit phone number.');
       return;
     }
 
@@ -93,14 +99,20 @@ export default function Contact() {
       return;
     }
 
-    const now = Date.now();
-    if (now - lastMemberSubmit < 60000) {
-      setMemberError('Please wait 60 seconds before submitting another application.');
+    if (!memberForm.fullName || !memberForm.email || !memberForm.phone) {
+      setMemberError('Please fill out all required fields (Full Name, Email, and Phone).');
       return;
     }
 
-    if (!memberForm.fullName || !memberForm.email || !memberForm.phone) {
-      setMemberError('Please fill out all required fields (Full Name, Email, and Phone).');
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(memberForm.email)) {
+      setMemberError('Please enter a valid email address.');
+      return;
+    }
+
+    const phoneRegex = /^\d{10}$/;
+    if (!phoneRegex.test(memberForm.phone)) {
+      setMemberError('Please enter a valid 10-digit phone number.');
       return;
     }
 
@@ -207,6 +219,13 @@ export default function Contact() {
         },
         theme: {
           color: "#D97706" // Primary color
+        },
+        modal: {
+          ondismiss: function () {
+            setIsVerifyingPayment(false);
+            // Optionally check if we should show a message
+            alert("Payment window closed. If your payment was deducted, please wait for the confirmation email.");
+          }
         }
       };
 

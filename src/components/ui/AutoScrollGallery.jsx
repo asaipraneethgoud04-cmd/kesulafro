@@ -65,6 +65,7 @@ const AutoScrollGallery = ({ items }) => {
           src={item.image} 
           loading="lazy" 
           className="w-full h-full object-cover transition-transform duration-[800ms] ease-out group-hover/card:scale-105" 
+          style={item.objectPosition ? { objectPosition: item.objectPosition } : {}}
           alt="Gallery Memory" 
         />
         

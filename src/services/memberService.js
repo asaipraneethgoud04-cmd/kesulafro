@@ -2,11 +2,17 @@ import { supabase } from '../lib/supabase';
 
 export const memberService = {
   async getMembers() {
-    const { data, error } = await supabase
+    let { data, error } = await supabase
       .from('members')
-      .select('id, fullName, email, phone, address, interestArea, status, message, submittedAt')
+      .select('*')
       .order('submittedAt', { ascending: false });
-    if (error) throw error;
+      
+    if (error) {
+      // Fallback if submittedAt doesn't exist
+      const res = await supabase.from('members').select('*');
+      if (res.error) throw res.error;
+      return res.data;
+    }
     return data;
   },
 

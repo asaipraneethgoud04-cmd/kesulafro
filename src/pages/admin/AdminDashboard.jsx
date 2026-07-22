@@ -33,7 +33,7 @@ export default function AdminDashboard() {
 
   // Custom Hooks
   const { events, fetchEvents, createEvent, updateEvent, deleteEvent } = useEvents();
-  const { gallery, fetchGallery, addImage, deleteImage } = useGallery();
+  const { gallery, fetchGallery, addImage, deleteImage, updateImageShape } = useGallery();
   const { members, fetchMembers, updateMemberStatus } = useMembers();
   const { donations, fetchDonations, deleteDonation } = useDonations();
   const { contacts, fetchContacts } = useContacts();
@@ -101,9 +101,21 @@ export default function AdminDashboard() {
 
   const openEditEventForm = (event) => {
     setEditingEvent(event);
+    
+    let formattedDate = '';
+    if (event.date) {
+      if (event.date.includes('T')) {
+        formattedDate = event.date.split('T')[0];
+      } else if (event.date.includes(' ')) {
+        formattedDate = event.date.split(' ')[0];
+      } else {
+        formattedDate = event.date;
+      }
+    }
+
     setEventFormData({
       title: event.title, description: event.description, category: event.category,
-      tags: event.tags || '', date: event.date || '', location: event.location || '',
+      tags: event.tags || '', date: formattedDate, location: event.location || '',
       imageUrl: event.imageUrl || '', status: event.status, featured: event.featured === 1 || event.featured === true
     });
     setShowEventForm(true);
@@ -111,6 +123,18 @@ export default function AdminDashboard() {
 
   const handleEventFormSubmit = async (e) => {
     e.preventDefault();
+    
+    if (eventFormData.status === 'upcoming' && eventFormData.date) {
+      const selectedDate = new Date(eventFormData.date);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      if (selectedDate < today) {
+        alert("An 'Upcoming' event cannot have a date in the past.");
+        return;
+      }
+    }
+
     let success = false;
     if (editingEvent) {
       success = await updateEvent(editingEvent.id, eventFormData);
@@ -261,6 +285,7 @@ export default function AdminDashboard() {
               <GalleryGrid 
                 gallery={gallery} 
                 handleDeleteImage={deleteImage} 
+                handleUpdateImageShape={updateImageShape}
               />
             </div>
           )}

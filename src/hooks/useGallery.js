@@ -41,12 +41,24 @@ export const useGallery = () => {
     }
   };
 
+  const updateImageShape = async (id, gridShape, objectPosition = '50% 50%') => {
+    try {
+      await galleryService.updateImage(id, { gridShape, objectPosition });
+      await fetchGallery();
+      return true;
+    } catch (err) {
+      setError(err.message);
+      return false;
+    }
+  };
+
   return {
     gallery,
     isLoading,
     error,
     fetchGallery,
     addImage,
+    updateImageShape,
     deleteImage
   };
 };

@@ -236,7 +236,7 @@ export default function AdminDashboard() {
 
       if (newStatus === 'active' && activeMemberObj) {
         try {
-          const apiUrl = import.meta.env.VITE_API_URL || '';
+          const apiUrl = import.meta.env.VITE_API_URL || 'https://kesulaback.onrender.com';
           await fetch(`${apiUrl}/api/approve-member`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },

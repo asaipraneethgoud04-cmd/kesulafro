@@ -79,7 +79,7 @@ export default function CrowdfundingBanner() {
 
     try {
       // 1. Create order on backend
-      const apiUrl = import.meta.env.VITE_API_URL || '';
+      const apiUrl = import.meta.env.VITE_API_URL || 'https://kesulaback.onrender.com';
       const response = await fetch(`${apiUrl}/api/create-order`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

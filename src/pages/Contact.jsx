@@ -216,7 +216,7 @@ export default function Contact() {
       if (!error) {
         // Trigger welcome email
         try {
-          await fetch(`${import.meta.env.VITE_API_URL || ''}/api/send-welcome-email`, {
+          await fetch(`${import.meta.env.VITE_API_URL || 'https://kesulaback.onrender.com'}/api/send-welcome-email`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email: cleanEmail, name: memberForm.fullName, details: memberForm })
@@ -254,7 +254,7 @@ export default function Contact() {
 
     try {
       // 1. Create order on backend
-      const orderResponse = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/create-order`, {
+      const orderResponse = await fetch(`${import.meta.env.VITE_API_URL || 'https://kesulaback.onrender.com'}/api/create-order`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ amount: Number(amountToDonate) })
@@ -280,7 +280,7 @@ export default function Contact() {
           // 3. Verify payment on backend
           setIsVerifyingPayment(true);
           try {
-            const verifyResponse = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/verify-payment`, {
+            const verifyResponse = await fetch(`${import.meta.env.VITE_API_URL || 'https://kesulaback.onrender.com'}/api/verify-payment`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({

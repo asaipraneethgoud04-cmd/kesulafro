@@ -132,11 +132,11 @@ const EventForm = function({
 
                       storageService.uploadCanvasToSupabase(canvas, 'events')
                         .then(url => {
-                          setEventFormData({ ...eventFormData, imageUrl: url });
+                          setEventFormData(prev => ({ ...prev, imageUrl: url }));
                         })
                         .catch(err => {
-                          console.error('Upload failed:', err);
-                          alert('Failed to upload image. Please try again.');
+                          console.warn('Upload fallback warning:', err);
+                          setEventFormData(prev => ({ ...prev, imageUrl: canvas.toDataURL('image/webp', 0.8) }));
                         });
                     };
                     img.src = event.target.result;
@@ -159,6 +159,109 @@ const EventForm = function({
               placeholder="Detail report or upcoming event overview"
               required
             ></textarea>
+          </div>
+
+          <div className="border-t border-slate-200/80 pt-4 mt-4 space-y-4">
+            <h4 className="text-xs font-extrabold uppercase tracking-widest text-[#8a3004]">Crowdfunding Settings</h4>
+            
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="form-crowdfunding"
+                checked={eventFormData.is_crowdfunding || false}
+                onChange={(e) => setEventFormData({ ...eventFormData, is_crowdfunding: e.target.checked })}
+                className="w-4 h-4 text-primary focus:ring-primary border-secondary/30 rounded"
+              />
+              <label htmlFor="form-crowdfunding" className="text-sm font-bold text-slate-800">Enable Crowdfunding Campaign for this Event</label>
+            </div>
+
+            {eventFormData.is_crowdfunding && (
+              <div className="bg-orange-50/60 p-4 rounded-2xl border border-orange-200/60 space-y-3">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="flex flex-col">
+                    <label htmlFor="form-target-amount" className="text-xs font-bold text-slate-700 mb-1">Goal Target Amount (₹) *</label>
+                    <input
+                      id="form-target-amount"
+                      type="number"
+                      value={eventFormData.target_amount || ''}
+                      onChange={(e) => setEventFormData({ ...eventFormData, target_amount: parseFloat(e.target.value) || 0 })}
+                      className="glass-input rounded-xl p-2.5 text-sm text-slate-900 bg-white"
+                      placeholder="e.g. 500000"
+                      required={eventFormData.is_crowdfunding}
+                    />
+                  </div>
+                  <div className="flex flex-col">
+                    <div className="flex items-center justify-between mb-1">
+                      <label htmlFor="form-collected-amount" className="text-xs font-bold text-slate-700">Collected Amount (₹)</label>
+                      <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100/90 px-2 py-0.5 rounded-full flex items-center gap-1">
+                        <span className="material-symbols-outlined text-xs">bolt</span> Razorpay Auto
+                      </span>
+                    </div>
+                    <input
+                      id="form-collected-amount"
+                      type="number"
+                      value={eventFormData.collected_amount || ''}
+                      onChange={(e) => setEventFormData({ ...eventFormData, collected_amount: parseFloat(e.target.value) || 0 })}
+                      className="glass-input rounded-xl p-2.5 text-sm text-slate-900 bg-white"
+                      placeholder="Auto-calculated via Razorpay (e.g. 0)"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="flex flex-col">
+                    <label htmlFor="form-end-date" className="text-xs font-bold text-slate-700 mb-1">Campaign End Date / Deadline *</label>
+                    <input
+                      id="form-end-date"
+                      type="date"
+                      value={eventFormData.end_date || ''}
+                      onChange={(e) => setEventFormData({ ...eventFormData, end_date: e.target.value })}
+                      className="glass-input rounded-xl p-2.5 text-sm text-slate-900 bg-white"
+                      required={eventFormData.is_crowdfunding}
+                    />
+                  </div>
+                  <div className="flex flex-col">
+                    <div className="flex items-center justify-between mb-1">
+                      <label htmlFor="form-supporters-count" className="text-xs font-bold text-slate-700">Donors / Supporters</label>
+                      <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100/90 px-2 py-0.5 rounded-full flex items-center gap-1">
+                        <span className="material-symbols-outlined text-xs">bolt</span> Razorpay Auto
+                      </span>
+                    </div>
+                    <input
+                      id="form-supporters-count"
+                      type="number"
+                      value={eventFormData.supporters_count || ''}
+                      onChange={(e) => setEventFormData({ ...eventFormData, supporters_count: parseInt(e.target.value) || 0 })}
+                      className="glass-input rounded-xl p-2.5 text-sm text-slate-900 bg-white"
+                      placeholder="Auto-updated via Razorpay (e.g. 0)"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex flex-col">
+                  <label htmlFor="form-campaign-tagline" className="text-xs font-bold text-slate-700 mb-1">Campaign Tagline / Goal Objective</label>
+                  <input
+                    id="form-campaign-tagline"
+                    type="text"
+                    value={eventFormData.campaign_tagline || ''}
+                    onChange={(e) => setEventFormData({ ...eventFormData, campaign_tagline: e.target.value })}
+                    className="glass-input rounded-xl p-2.5 text-sm text-slate-900 bg-white"
+                    placeholder="e.g. Emergency health & school relief for 500 tribal families"
+                  />
+                </div>
+
+                <div className="flex items-center gap-2 pt-1">
+                  <input
+                    type="checkbox"
+                    id="form-active-banner"
+                    checked={eventFormData.is_active_banner || false}
+                    onChange={(e) => setEventFormData({ ...eventFormData, is_active_banner: e.target.checked })}
+                    className="w-4 h-4 text-primary focus:ring-primary border-secondary/30 rounded"
+                  />
+                  <label htmlFor="form-active-banner" className="text-xs font-bold text-[#8a3004]">Display as Featured Banner on Home Page</label>
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="flex gap-8 items-center pt-2">

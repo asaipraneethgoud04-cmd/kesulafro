@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import Layout from './components/layout/Layout.jsx'
 import Home from './pages/Home.jsx'
 import PageSkeleton from './components/layout/PageSkeleton.jsx'
+import { LanguageProvider } from './context/LanguageContext.jsx'
 
 // Lazy loaded routes
 const About = lazy(() => import('./pages/About.jsx'))
@@ -34,7 +35,7 @@ export default function App() {
   }, [showIntro]);
 
   return (
-    <>
+    <LanguageProvider>
       <AnimatePresence>
         {showIntro && (
           <motion.div
@@ -123,6 +124,6 @@ export default function App() {
           </Routes>
         </Suspense>
       </Router>
-    </>
+    </LanguageProvider>
   )
 }

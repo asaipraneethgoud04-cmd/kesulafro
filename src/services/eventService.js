@@ -4,7 +4,7 @@ export const eventService = {
   async getEvents() {
     const { data, error } = await supabase
       .from('events')
-      .select('id, title, description, category, tags, date, location, imageUrl, status, featured, createdAt')
+      .select('*')
       .order('date', { ascending: false });
     if (error) throw error;
     return data;
@@ -13,7 +13,7 @@ export const eventService = {
   async getEventById(id) {
     const { data, error } = await supabase
       .from('events')
-      .select('id, title, description, category, tags, date, location, imageUrl, status, featured, createdAt')
+      .select('*')
       .eq('id', id)
       .single();
     if (error) throw error;

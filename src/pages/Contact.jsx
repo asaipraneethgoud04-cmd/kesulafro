@@ -2,8 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 import { supabase } from '../lib/supabase';
 import { categoryService } from '../services/categoryService';
+import { useLanguage } from '../context/LanguageContext';
+import MembershipCardModal from '../components/ui/MembershipCardModal';
 
 export default function Contact() {
+  const { t } = useLanguage();
   useScrollReveal();
 
   // Contact Form State
@@ -15,12 +18,63 @@ export default function Contact() {
   const [isContactSubmitting, setIsContactSubmitting] = useState(false);
 
   // Membership Form State
-  const [memberForm, setMemberForm] = useState({ fullName: '', email: '', phone: '', address: '', interestArea: '', message: '' });
+  const [memberForm, setMemberForm] = useState({ fullName: '', email: '', phone: '', address: '', interestArea: '', message: '', photoUrl: '' });
   const [memberSuccess, setMemberSuccess] = useState(false);
   const [memberError, setMemberError] = useState('');
   const [memberHoneypot, setMemberHoneypot] = useState('');
   const [lastMemberSubmit, setLastMemberSubmit] = useState(0);
   const [isMemberSubmitting, setIsMemberSubmitting] = useState(false);
+  const [submittedMemberData, setSubmittedMemberData] = useState(null);
+  const [showIdCardModal, setShowIdCardModal] = useState(false);
+  const [isCompressingPhoto, setIsCompressingPhoto] = useState(false);
+  const [photoCompressionStats, setPhotoCompressionStats] = useState(null);
+
+  const handleMemberPhotoUpload = (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+
+    setIsCompressingPhoto(true);
+    const origSizeKB = (file.size / 1024).toFixed(1);
+    const origSizeText = file.size > 1024 * 1024 ? `${(file.size / (1024 * 1024)).toFixed(2)} MB` : `${origSizeKB} KB`;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const maxSize = 300;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > maxSize) {
+            height = Math.round((height * maxSize) / width);
+            width = maxSize;
+          }
+        } else {
+          if (height > maxSize) {
+            width = Math.round((width * maxSize) / height);
+            height = maxSize;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.82);
+
+        const compressedBytes = Math.round((dataUrl.length * 3) / 4);
+        const compressedSizeText = `${(compressedBytes / 1024).toFixed(1)} KB`;
+
+        setMemberForm(prev => ({ ...prev, photoUrl: dataUrl }));
+        setPhotoCompressionStats({ original: origSizeText, compressed: compressedSizeText });
+        setIsCompressingPhoto(false);
+      };
+      img.src = event.target.result;
+    };
+    reader.readAsDataURL(file);
+  };
 
   // Donation Section State
   const [donationAmount, setDonationAmount] = useState('1000');
@@ -118,21 +172,61 @@ export default function Contact() {
 
     setIsMemberSubmitting(true);
     try {
-      const { error } = await supabase.from('members').insert([memberForm]);
+      const cleanEmail = memberForm.email.toLowerCase().trim();
+      const cleanPhone = memberForm.phone.trim();
+
+      // 1. Check for existing email in database
+      const { data: existingEmail } = await supabase
+        .from('members')
+        .select('id')
+        .eq('email', cleanEmail)
+        .limit(1);
+
+      if (existingEmail && existingEmail.length > 0) {
+        setMemberError('A membership application has already been submitted with this email address.');
+        setIsMemberSubmitting(false);
+        return;
+      }
+
+      // 2. Check for existing phone number in database
+      const { data: existingPhone } = await supabase
+        .from('members')
+        .select('id')
+        .eq('phone', cleanPhone)
+        .limit(1);
+
+      if (existingPhone && existingPhone.length > 0) {
+        setMemberError('A membership application has already been submitted with this phone number.');
+        setIsMemberSubmitting(false);
+        return;
+      }
+
+      const payload = { ...memberForm, email: cleanEmail, phone: cleanPhone, photo_url: memberForm.photoUrl };
+      let { data: insertedData, error } = await supabase.from('members').insert([payload]).select();
+
+      // Fallback if photoUrl column does not exist yet in Supabase members schema cache
+      if (error && (error.message.includes('photoUrl') || error.message.includes('photo_url') || error.message.includes('schema cache'))) {
+        console.warn('DB missing photoUrl/photo_url column, retrying insert without photoUrl field:', error.message);
+        const { photoUrl, photo_url, ...strippedForm } = payload;
+        const retryResult = await supabase.from('members').insert([strippedForm]).select();
+        insertedData = retryResult.data;
+        error = retryResult.error;
+      }
+
       if (!error) {
         // Trigger welcome email
         try {
           await fetch(`${import.meta.env.VITE_API_URL || ''}/api/send-welcome-email`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: memberForm.email, name: memberForm.fullName, details: memberForm })
+            body: JSON.stringify({ email: cleanEmail, name: memberForm.fullName, details: memberForm })
           });
         } catch (emailErr) {
           console.error("Failed to send welcome email:", emailErr);
         }
 
         setMemberSuccess(true);
-        setMemberForm({ fullName: '', email: '', phone: '', address: '', interestArea: '', message: '' });
+        setMemberForm({ fullName: '', email: '', phone: '', address: '', interestArea: '', message: '', photoUrl: '' });
         setLastMemberSubmit(now);
       } else {
         setMemberError(error.message || 'Submission failed.');
@@ -254,9 +348,9 @@ export default function Contact() {
       <section className="relative min-h-[500px] md:min-h-[600px] lg:min-h-[800px] flex items-center justify-center pt-32 pb-20 md:pt-48 md:pb-24 overflow-hidden z-10 reveal bg-cover bg-center bg-fixed" style={{ backgroundImage: "url('/images/contact2.webp')" }}>
         <div className="absolute inset-0 bg-black/60 z-0 pointer-events-none"></div>
         <div className="relative z-10 text-center text-white px-gutter max-w-2xl mx-auto w-full">
-          <span className="text-white font-extrabold text-xs uppercase tracking-[0.25em] block mb-3 text-shadow-md">Reach Out</span>
-          <h1 className="font-display-lg text-4xl sm:text-5xl md:text-headline-lg font-extrabold tracking-tight text-white text-shadow-lg mb-4">We'd Love to Hear from You</h1>
-          <p className="font-body-lg text-white/95 font-medium text-shadow-md">Got a question? Want to help out? Just drop us a message — we'll get back to you.</p>
+          <span className="text-white font-extrabold text-xs uppercase tracking-[0.25em] block mb-3 text-shadow-md">{t('nav.contact')}</span>
+          <h1 className="font-display-lg text-4xl sm:text-5xl md:text-headline-lg font-extrabold tracking-tight text-white text-shadow-lg mb-4">{t('contact.title')}</h1>
+          <p className="font-body-lg text-white/95 font-medium text-shadow-md">{t('contact.subtitle')}</p>
         </div>
       </section>
 
@@ -273,10 +367,10 @@ export default function Contact() {
                 <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#8a3004] to-[#c5621a] flex items-center justify-center shadow-md">
                   <span className="material-symbols-outlined text-white text-xl">location_on</span>
                 </div>
-                <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">Office Address</h2>
+                <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">{t('contactPage.officeAddress')}</h2>
               </div>
               <p className="text-slate-600 leading-relaxed text-[15px]">
-                Plot No. 290, Jayakalani Nagar, Near Peddamma Thalli Temple, Chengicherla, Boduppal Municipal Corporation, Medchal–Malkajgiri District, Telangana – India
+                {t('contact.address')}
               </p>
             </div>
             
@@ -334,8 +428,8 @@ export default function Contact() {
                 <span className="material-symbols-outlined text-white text-xl">edit_note</span>
               </div>
               <div>
-                <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">Send an Enquiry</h2>
-                <p className="text-xs text-slate-400 font-medium">We usually respond within 24 hours</p>
+                <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">{t('contactPage.sendEnquiry')}</h2>
+                <p className="text-xs text-slate-400 font-medium">{t('contactPage.respondTime')}</p>
               </div>
             </div>
             
@@ -358,35 +452,35 @@ export default function Contact() {
                 {contactError && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm font-semibold flex items-center gap-2"><span className="material-symbols-outlined text-lg">error</span>{contactError}</div>}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div className="flex flex-col gap-2">
-                    <label htmlFor="contact-name" className="text-sm font-bold text-slate-700 flex items-center gap-1.5"><span className="material-symbols-outlined text-[15px] text-[#8a3004]">person</span>Your Name <span className="text-red-400">*</span></label>
-                    <input id="contact-name" type="text" autoComplete="name" aria-required="true" value={contactForm.name} onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-base text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-[#8a3004] focus:ring-2 focus:ring-2 focus:ring-[#8a3004] focus:ring-offset-1 focus:outline-none transition-all duration-200" placeholder="Your full name" required />
+                    <label htmlFor="contact-name" className="text-sm font-bold text-slate-700 flex items-center gap-1.5"><span className="material-symbols-outlined text-[15px] text-[#8a3004]">person</span>{t('contactPage.yourName')} <span className="text-red-400">*</span></label>
+                    <input id="contact-name" type="text" autoComplete="name" aria-required="true" value={contactForm.name} onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-base text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-[#8a3004] focus:ring-2 focus:ring-2 focus:ring-[#8a3004] focus:ring-offset-1 focus:outline-none transition-all duration-200" placeholder={t('contactPage.namePlaceholder')} required />
                   </div>
                   <div className="flex flex-col gap-2">
-                    <label htmlFor="contact-email" className="text-sm font-bold text-slate-700 flex items-center gap-1.5"><span className="material-symbols-outlined text-[15px] text-[#8a3004]">mail</span>Email <span className="text-red-400">*</span></label>
-                    <input id="contact-email" type="email" autoComplete="email" aria-required="true" value={contactForm.email} onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-base text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-[#8a3004] focus:ring-2 focus:ring-2 focus:ring-[#8a3004] focus:ring-offset-1 focus:outline-none transition-all duration-200" placeholder="you@example.com" required />
+                    <label htmlFor="contact-email" className="text-sm font-bold text-slate-700 flex items-center gap-1.5"><span className="material-symbols-outlined text-[15px] text-[#8a3004]">mail</span>{t('contactPage.email')} <span className="text-red-400">*</span></label>
+                    <input id="contact-email" type="email" autoComplete="email" aria-required="true" value={contactForm.email} onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-base text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-[#8a3004] focus:ring-2 focus:ring-2 focus:ring-[#8a3004] focus:ring-offset-1 focus:outline-none transition-all duration-200" placeholder={t('contactPage.emailPlaceholder')} required />
                   </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div className="flex flex-col gap-2">
-                    <label htmlFor="contact-phone" className="text-sm font-bold text-slate-700 flex items-center gap-1.5"><span className="material-symbols-outlined text-[15px] text-[#8a3004]">call</span>Phone</label>
+                    <label htmlFor="contact-phone" className="text-sm font-bold text-slate-700 flex items-center gap-1.5"><span className="material-symbols-outlined text-[15px] text-[#8a3004]">call</span>{t('contactPage.phone')}</label>
                     <input id="contact-phone" type="tel" autoComplete="tel" value={contactForm.phone} onChange={(e) => setContactForm({ ...contactForm, phone: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-base text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-[#8a3004] focus:ring-2 focus:ring-2 focus:ring-[#8a3004] focus:ring-offset-1 focus:outline-none transition-all duration-200" placeholder="+91 XXXXX XXXXX" />
                   </div>
                   <div className="flex flex-col gap-2">
-                    <label htmlFor="contact-subject" className="text-sm font-bold text-slate-700 flex items-center gap-1.5"><span className="material-symbols-outlined text-[15px] text-[#8a3004]">category</span>Enquiry Type <span className="text-red-400">*</span></label>
+                    <label htmlFor="contact-subject" className="text-sm font-bold text-slate-700 flex items-center gap-1.5"><span className="material-symbols-outlined text-[15px] text-[#8a3004]">category</span>{t('contactPage.enquiryType')} <span className="text-red-400">*</span></label>
                     <select id="contact-subject" aria-required="true" value={contactForm.subject} onChange={(e) => setContactForm({ ...contactForm, subject: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-base text-slate-900 focus:bg-white focus:border-[#8a3004] focus:ring-2 focus:ring-2 focus:ring-[#8a3004] focus:ring-offset-1 focus:outline-none transition-all duration-200 appearance-none cursor-pointer">
-                      <option value="general">General Enquiry</option>
-                      <option value="donate">Donation Enquiry</option>
-                      <option value="volunteer">Volunteer Enquiry</option>
-                      <option value="other">Other</option>
+                      <option value="general">{t('contactPage.generalEnquiry')}</option>
+                      <option value="donate">{t('contactPage.donationEnquiry')}</option>
+                      <option value="volunteer">{t('contactPage.volunteerEnquiry')}</option>
+                      <option value="other">{t('contactPage.other')}</option>
                     </select>
                   </div>
                 </div>
                 <div className="flex flex-col gap-2">
-                  <label htmlFor="contact-message" className="text-sm font-bold text-slate-700 flex items-center gap-1.5"><span className="material-symbols-outlined text-[15px] text-[#8a3004]">chat</span>Message <span className="text-red-400">*</span></label>
-                  <textarea id="contact-message" aria-required="true" value={contactForm.message} onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })} rows="4" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-base text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-[#8a3004] focus:ring-2 focus:ring-2 focus:ring-[#8a3004] focus:ring-offset-1 focus:outline-none transition-all duration-200 resize-none" placeholder="How can we help you?" required></textarea>
+                  <label htmlFor="contact-message" className="text-sm font-bold text-slate-700 flex items-center gap-1.5"><span className="material-symbols-outlined text-[15px] text-[#8a3004]">chat</span>{t('contactPage.message')} <span className="text-red-400">*</span></label>
+                  <textarea id="contact-message" aria-required="true" value={contactForm.message} onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })} rows="4" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-base text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-[#8a3004] focus:ring-2 focus:ring-2 focus:ring-[#8a3004] focus:ring-offset-1 focus:outline-none transition-all duration-200 resize-none" placeholder={t('contactPage.messagePlaceholder')} required></textarea>
                 </div>
                 <button type="submit" disabled={isContactSubmitting} className="w-full bg-gradient-to-r from-[#8a3004] to-[#b5470a] hover:from-[#a03c08] hover:to-[#c55010] text-white font-bold text-sm uppercase tracking-[0.15em] px-8 py-4.5 rounded-2xl flex justify-center items-center gap-2.5 transition-all duration-300 transform hover:-translate-y-0.5 hover:shadow-xl hover:shadow-[#8a3004]/20 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none">
-                  {isContactSubmitting ? (<><span className="material-symbols-outlined animate-spin text-lg">autorenew</span>Sending...</>) : (<><span className="material-symbols-outlined text-lg">send</span>Submit Enquiry</>)}
+                  {isContactSubmitting ? (<><span className="material-symbols-outlined animate-spin text-lg">autorenew</span>{t('contactPage.submitting')}</>) : (<><span className="material-symbols-outlined text-lg">send</span>{t('contactPage.submitBtn')}</>)}
                 </button>
               </form>
             )}
@@ -398,10 +492,10 @@ export default function Contact() {
       <section id="donate" className="py-16 relative z-10 reveal overflow-hidden">
         <img src="/images/tribal_2.webp" className="absolute top-1/2 -translate-y-1/2 left-[-150px] w-[550px] h-[550px] opacity-[0.35] mix-blend-multiply pointer-events-none object-contain z-0 animate-spin-vertical-centered" alt="" />
         <div className="max-w-4xl mx-auto px-gutter text-center relative z-10">
-          <span className="text-primary font-bold text-xs uppercase tracking-[0.2em] block mb-2">Support Our Work</span>
-          <h2 className="font-headline-lg text-headline-lg">Help Us Keep Going</h2>
+          <span className="text-primary font-bold text-xs uppercase tracking-[0.2em] block mb-2">{t('contactPage.supportWork')}</span>
+          <h2 className="font-headline-lg text-headline-lg">{t('contactPage.helpKeepGoing')}</h2>
           <p className="font-body-md text-on-surface-variant max-w-2xl mx-auto mt-4 mb-10 leading-relaxed text-sm font-light">
-            Every rupee you give goes straight into running schools, health camps, tree plantations, and keeping Banjara arts alive. No middlemen, no overhead.
+            {t('contactPage.donationDesc')}
           </p>
 
           <div className="bg-white rounded-[32px] p-8 md:p-10 max-w-2xl mx-auto text-left border border-slate-100 shadow-[0_8px_60px_rgba(138,48,4,0.08)] relative overflow-hidden">
@@ -413,7 +507,7 @@ export default function Contact() {
                 <span className="material-symbols-outlined text-white text-xl">favorite</span>
               </div>
               <div>
-                <h3 className="text-2xl font-extrabold text-slate-900 tracking-tight">Donation Details</h3>
+                <h3 className="text-2xl font-extrabold text-slate-900 tracking-tight">{t('contactPage.donationDetails')}</h3>
                 <p className="text-xs text-slate-400 font-medium">100% goes to community projects</p>
               </div>
             </div>
@@ -431,17 +525,17 @@ export default function Contact() {
               <div className="relative z-10">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-7">
                   <div className="flex flex-col gap-2">
-                    <label htmlFor="donor-name" className="text-sm font-bold text-slate-700 flex items-center gap-1.5"><span className="material-symbols-outlined text-[15px] text-[#8a3004]">person</span>Full Name <span className="text-red-400">*</span></label>
-                    <input id="donor-name" type="text" autoComplete="name" aria-required="true" value={donationForm.name} onChange={(e) => setDonationForm({ ...donationForm, name: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-[15px] text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-[#8a3004] focus:ring-2 focus:ring-2 focus:ring-[#8a3004] focus:ring-offset-1 focus:outline-none transition-all duration-200" placeholder="Your full name" required disabled={isVerifyingPayment} />
+                    <label htmlFor="donor-name" className="text-sm font-bold text-slate-700 flex items-center gap-1.5"><span className="material-symbols-outlined text-[15px] text-[#8a3004]">person</span>{t('contactPage.yourName')} <span className="text-red-400">*</span></label>
+                    <input id="donor-name" type="text" autoComplete="name" aria-required="true" value={donationForm.name} onChange={(e) => setDonationForm({ ...donationForm, name: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-[15px] text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-[#8a3004] focus:ring-2 focus:ring-2 focus:ring-[#8a3004] focus:ring-offset-1 focus:outline-none transition-all duration-200" placeholder={t('contactPage.namePlaceholder')} required disabled={isVerifyingPayment} />
                   </div>
                   <div className="flex flex-col gap-2">
-                    <label htmlFor="donor-email" className="text-sm font-bold text-slate-700 flex items-center gap-1.5"><span className="material-symbols-outlined text-[15px] text-[#8a3004]">mail</span>Email <span className="text-red-400">*</span></label>
-                    <input id="donor-email" type="email" autoComplete="email" aria-required="true" value={donationForm.email} onChange={(e) => setDonationForm({ ...donationForm, email: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-[15px] text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-[#8a3004] focus:ring-2 focus:ring-2 focus:ring-[#8a3004] focus:ring-offset-1 focus:outline-none transition-all duration-200" placeholder="For donation receipt" required disabled={isVerifyingPayment} />
+                    <label htmlFor="donor-email" className="text-sm font-bold text-slate-700 flex items-center gap-1.5"><span className="material-symbols-outlined text-[15px] text-[#8a3004]">mail</span>{t('contactPage.email')} <span className="text-red-400">*</span></label>
+                    <input id="donor-email" type="email" autoComplete="email" aria-required="true" value={donationForm.email} onChange={(e) => setDonationForm({ ...donationForm, email: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-[15px] text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-[#8a3004] focus:ring-2 focus:ring-2 focus:ring-[#8a3004] focus:ring-offset-1 focus:outline-none transition-all duration-200" placeholder={t('contactPage.emailPlaceholder')} required disabled={isVerifyingPayment} />
                   </div>
                 </div>
 
                 <div className="mb-7">
-                  <label className="text-sm font-bold text-slate-700 flex items-center gap-1.5 mb-3"><span className="material-symbols-outlined text-[15px] text-[#8a3004]">payments</span>Select Amount</label>
+                  <label className="text-sm font-bold text-slate-700 flex items-center gap-1.5 mb-3"><span className="material-symbols-outlined text-[15px] text-[#8a3004]">payments</span>{t('contactPage.selectAmount')}</label>
                   <div className="grid grid-cols-4 gap-3">
                     {['500', '1000', '2500', '5000'].map((amt) => (
                       <button key={amt} onClick={() => { setDonationAmount(amt); setCustomAmount(''); }} disabled={isVerifyingPayment} className={`py-3.5 rounded-xl font-bold text-base transition-all duration-200 focus:outline-none border-2 ${donationAmount === amt && !customAmount ? 'bg-[#8a3004] text-white border-[#8a3004] shadow-lg shadow-[#8a3004]/20 scale-[1.03]' : 'bg-slate-50 text-slate-700 border-slate-200 hover:border-[#8a3004]/40 hover:bg-white'} disabled:opacity-50`}>₹{amt}</button>
@@ -450,12 +544,12 @@ export default function Contact() {
                 </div>
 
                 <div className="flex flex-col gap-2 mb-7">
-                  <label htmlFor="custom-amount" className="text-sm font-bold text-slate-700 flex items-center gap-1.5"><span className="material-symbols-outlined text-[15px] text-[#8a3004]">edit</span>Or Enter Custom Amount (₹)</label>
+                  <label htmlFor="custom-amount" className="text-sm font-bold text-slate-700 flex items-center gap-1.5"><span className="material-symbols-outlined text-[15px] text-[#8a3004]">edit</span>{t('contactPage.customAmount')}</label>
                   <input id="custom-amount" type="number" value={customAmount} onChange={(e) => { setCustomAmount(e.target.value); setDonationAmount(''); }} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-[15px] text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-[#8a3004] focus:ring-2 focus:ring-2 focus:ring-[#8a3004] focus:ring-offset-1 focus:outline-none transition-all duration-200" placeholder="Enter amount" disabled={isVerifyingPayment} />
                 </div>
 
                 <button onClick={handleDonateNow} disabled={isVerifyingPayment} className="w-full bg-gradient-to-r from-[#8a3004] to-[#b5470a] hover:from-[#a03c08] hover:to-[#c55010] text-white font-bold text-sm uppercase tracking-[0.15em] px-8 py-4.5 rounded-2xl flex justify-center items-center gap-2.5 transition-all duration-300 transform hover:-translate-y-0.5 hover:shadow-xl hover:shadow-[#8a3004]/20 disabled:opacity-60 disabled:cursor-not-allowed h-14">
-                  {isVerifyingPayment ? (<span className="material-symbols-outlined animate-spin text-2xl">autorenew</span>) : (<><span className="material-symbols-outlined text-lg">favorite</span>{`Donate Now (₹${customAmount || donationAmount})`}</>)}
+                  {isVerifyingPayment ? (<span className="material-symbols-outlined animate-spin text-2xl">autorenew</span>) : (<><span className="material-symbols-outlined text-lg">favorite</span>{`${t('contactPage.donateNow')} (₹${customAmount || donationAmount})`}</>)}
                 </button>
               </div>
             )}
@@ -502,10 +596,10 @@ export default function Contact() {
         <img src="/images/tribal_1.webp" className="absolute top-1/2 -translate-y-1/2 right-[-150px] w-[550px] h-[550px] opacity-[0.35] mix-blend-multiply pointer-events-none object-contain z-0 animate-spin-vertical-centered" alt="" />
         <div className="max-w-3xl mx-auto px-gutter relative z-10">
           <div className="text-center mb-12">
-            <span className="text-primary font-bold text-xs uppercase tracking-[0.2em] block mb-2">Be Part of This</span>
-            <h2 className="font-headline-lg text-headline-lg">Become a Member</h2>
+            <span className="text-primary font-bold text-xs uppercase tracking-[0.2em] block mb-2">{t('membership.tag')}</span>
+            <h2 className="font-headline-lg text-headline-lg">{t('membership.title')}</h2>
             <p className="font-body-md text-on-surface-variant max-w-md mx-auto mt-2 text-sm font-light">
-              Whether you can spare a weekend or a skill — there's a place for you here. Come join us on the ground.
+              {t('membership.subtitle')}
             </p>
           </div>
 
@@ -518,8 +612,8 @@ export default function Contact() {
                 <span className="material-symbols-outlined text-white text-xl">group_add</span>
               </div>
               <div>
-                <h3 className="text-2xl font-extrabold text-slate-900 tracking-tight">Membership Application</h3>
-                <p className="text-xs text-slate-400 font-medium">Join our growing family of changemakers</p>
+                <h3 className="text-2xl font-extrabold text-slate-900 tracking-tight">{t('membership.cardTitle')}</h3>
+                <p className="text-xs text-slate-400 font-medium">{t('membership.cardSubtitle')}</p>
               </div>
             </div>
             
@@ -528,9 +622,11 @@ export default function Contact() {
                 <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-4">
                   <span className="material-symbols-outlined text-4xl text-emerald-600">verified</span>
                 </div>
-                <h4 className="font-bold text-2xl mb-2 text-emerald-900">You're In!</h4>
-                <p className="text-emerald-700 font-light">Thank you for signing up. Our team will review your application and get in touch with you soon.</p>
-                <button onClick={() => setMemberSuccess(false)} className="mt-6 text-sm font-bold text-emerald-700 hover:text-emerald-900 underline underline-offset-4 transition-colors">Apply again</button>
+                <h4 className="font-bold text-2xl mb-2 text-emerald-900">Application Submitted!</h4>
+                <p className="text-emerald-700 font-medium max-w-md mx-auto">
+                  Thank you for applying. Your membership application is under review by our admin team. Upon approval, your <strong>Official Digital Membership ID Card</strong> will be sent to your email.
+                </p>
+                <button onClick={() => setMemberSuccess(false)} className="mt-6 text-sm font-bold text-emerald-700 hover:text-emerald-900 underline underline-offset-4 transition-colors">Submit another application</button>
               </div>
             ) : (
               <form onSubmit={handleMemberSubmit} className="space-y-6 relative z-10">
@@ -540,45 +636,104 @@ export default function Contact() {
                   <input type="text" id="member-website" name="website" value={memberHoneypot} onChange={e => setMemberHoneypot(e.target.value)} tabIndex="-1" autoComplete="off" />
                 </div>
                 {memberError && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm font-semibold flex items-center gap-2"><span className="material-symbols-outlined text-lg">error</span>{memberError}</div>}
+                
+                {/* Member Photo Upload */}
+                <div className="flex flex-col items-center justify-center p-6 bg-orange-50/70 border-2 border-dashed border-orange-300/80 rounded-2xl text-center space-y-3 relative group hover:border-[#8a3004] transition-all">
+                  <div className="relative w-24 h-24 rounded-full border-3 border-[#8a3004] overflow-hidden bg-white shadow-md flex items-center justify-center ring-4 ring-orange-100">
+                    {isCompressingPhoto ? (
+                      <div className="flex flex-col items-center justify-center text-[#8a3004] text-xs font-bold gap-1 p-1">
+                        <span className="material-symbols-outlined animate-spin text-2xl">autorenew</span>
+                        <span>Compressing...</span>
+                      </div>
+                    ) : memberForm.photoUrl ? (
+                      <img src={memberForm.photoUrl} alt="Member Profile" className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="material-symbols-outlined text-4xl text-[#8a3004]/60">add_a_photo</span>
+                    )}
+                  </div>
+
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="flex items-center gap-2">
+                      <label htmlFor="member-photo-upload" className="cursor-pointer text-xs font-extrabold uppercase tracking-wider text-white bg-gradient-to-r from-[#8a3004] to-[#b5470a] px-5 py-2.5 rounded-xl shadow-md hover:from-[#a03c08] hover:to-[#c55010] transition-all inline-flex items-center gap-2">
+                        <span className="material-symbols-outlined text-base">folder_open</span>
+                        {memberForm.photoUrl ? 'Browse & Change Photo' : 'Browse & Upload Photo'}
+                      </label>
+                      {memberForm.photoUrl && (
+                        <button 
+                          type="button" 
+                          onClick={() => { setMemberForm(prev => ({ ...prev, photoUrl: '' })); setPhotoCompressionStats(null); }}
+                          className="text-xs font-bold text-red-600 hover:text-red-800 bg-red-50 hover:bg-red-100 px-3 py-2 rounded-xl transition-all"
+                        >
+                          Remove
+                        </button>
+                      )}
+                    </div>
+
+                    <input 
+                      id="member-photo-upload" 
+                      type="file" 
+                      accept="image/*" 
+                      onChange={handleMemberPhotoUpload} 
+                      className="hidden" 
+                    />
+                    
+                    {photoCompressionStats ? (
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 border border-emerald-200 text-emerald-800 text-[11px] font-bold rounded-full mt-1">
+                        <span className="material-symbols-outlined text-sm text-emerald-600">compress</span>
+                        Auto-Compressed: <span className="line-through opacity-75">{photoCompressionStats.original}</span> ➔ <span className="text-emerald-700 font-extrabold">{photoCompressionStats.compressed}</span>
+                      </div>
+                    ) : (
+                      <p className="text-[11px] text-slate-500 font-medium mt-1">Browse any image — auto-compressed instantly for ID Card generation</p>
+                    )}
+                  </div>
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div className="flex flex-col gap-2">
-                    <label htmlFor="member-name" className="text-sm font-bold text-slate-700 flex items-center gap-1.5"><span className="material-symbols-outlined text-[15px] text-[#8a3004]">person</span>Full Name <span className="text-red-400">*</span></label>
-                    <input id="member-name" type="text" autoComplete="name" aria-required="true" value={memberForm.fullName} onChange={(e) => setMemberForm({ ...memberForm, fullName: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-[15px] text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-[#8a3004] focus:ring-2 focus:ring-2 focus:ring-[#8a3004] focus:ring-offset-1 focus:outline-none transition-all duration-200" placeholder="Your full name" required />
+                    <label htmlFor="member-name" className="text-sm font-bold text-slate-700 flex items-center gap-1.5"><span className="material-symbols-outlined text-[15px] text-[#8a3004]">person</span>{t('membership.fullName')} <span className="text-red-400">*</span></label>
+                    <input id="member-name" type="text" autoComplete="name" aria-required="true" value={memberForm.fullName} onChange={(e) => setMemberForm({ ...memberForm, fullName: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-[15px] text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-[#8a3004] focus:ring-2 focus:ring-2 focus:ring-[#8a3004] focus:ring-offset-1 focus:outline-none transition-all duration-200" placeholder={t('membership.namePlaceholder')} required />
                   </div>
                   <div className="flex flex-col gap-2">
-                    <label htmlFor="member-email" className="text-sm font-bold text-slate-700 flex items-center gap-1.5"><span className="material-symbols-outlined text-[15px] text-[#8a3004]">mail</span>Email <span className="text-red-400">*</span></label>
-                    <input id="member-email" type="email" autoComplete="email" aria-required="true" value={memberForm.email} onChange={(e) => setMemberForm({ ...memberForm, email: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-[15px] text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-[#8a3004] focus:ring-2 focus:ring-2 focus:ring-[#8a3004] focus:ring-offset-1 focus:outline-none transition-all duration-200" placeholder="you@example.com" required />
+                    <label htmlFor="member-email" className="text-sm font-bold text-slate-700 flex items-center gap-1.5"><span className="material-symbols-outlined text-[15px] text-[#8a3004]">mail</span>{t('membership.email')} <span className="text-red-400">*</span></label>
+                    <input id="member-email" type="email" autoComplete="email" aria-required="true" value={memberForm.email} onChange={(e) => setMemberForm({ ...memberForm, email: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-[15px] text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-[#8a3004] focus:ring-2 focus:ring-2 focus:ring-[#8a3004] focus:ring-offset-1 focus:outline-none transition-all duration-200" placeholder={t('membership.emailPlaceholder')} required />
                   </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div className="flex flex-col gap-2">
-                    <label htmlFor="member-phone" className="text-sm font-bold text-slate-700 flex items-center gap-1.5"><span className="material-symbols-outlined text-[15px] text-[#8a3004]">call</span>Phone <span className="text-red-400">*</span></label>
+                    <label htmlFor="member-phone" className="text-sm font-bold text-slate-700 flex items-center gap-1.5"><span className="material-symbols-outlined text-[15px] text-[#8a3004]">call</span>{t('membership.phone')} <span className="text-red-400">*</span></label>
                     <input id="member-phone" type="tel" autoComplete="tel" aria-required="true" value={memberForm.phone} onChange={(e) => setMemberForm({ ...memberForm, phone: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-[15px] text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-[#8a3004] focus:ring-2 focus:ring-2 focus:ring-[#8a3004] focus:ring-offset-1 focus:outline-none transition-all duration-200" placeholder="+91 XXXXX XXXXX" required />
                   </div>
                   <div className="flex flex-col gap-2">
-                    <label htmlFor="member-interest" className="text-sm font-bold text-slate-700 flex items-center gap-1.5"><span className="material-symbols-outlined text-[15px] text-[#8a3004]">interests</span>Area of Interest</label>
+                    <label htmlFor="member-interest" className="text-sm font-bold text-slate-700 flex items-center gap-1.5"><span className="material-symbols-outlined text-[15px] text-[#8a3004]">interests</span>{t('membership.areaOfInterest')}</label>
                     <select id="member-interest" value={memberForm.interestArea} onChange={(e) => setMemberForm({ ...memberForm, interestArea: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-[15px] text-slate-900 focus:bg-white focus:border-[#8a3004] focus:ring-2 focus:ring-2 focus:ring-[#8a3004] focus:ring-offset-1 focus:outline-none transition-all duration-200 appearance-none cursor-pointer">
-                      <option value="">Select a Focus Area</option>
+                      <option value="">{t('membership.selectFocusArea')}</option>
                       {interestCategories.map((cat, idx) => (<option key={idx} value={cat}>{cat}</option>))}
                     </select>
                   </div>
                 </div>
                 <div className="flex flex-col gap-2">
-                  <label htmlFor="member-address" className="text-sm font-bold text-slate-700 flex items-center gap-1.5"><span className="material-symbols-outlined text-[15px] text-[#8a3004]">home</span>Address</label>
-                  <input id="member-address" type="text" autoComplete="street-address" value={memberForm.address} onChange={(e) => setMemberForm({ ...memberForm, address: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-[15px] text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-[#8a3004] focus:ring-2 focus:ring-2 focus:ring-[#8a3004] focus:ring-offset-1 focus:outline-none transition-all duration-200" placeholder="City, State, Country" />
+                  <label htmlFor="member-address" className="text-sm font-bold text-slate-700 flex items-center gap-1.5"><span className="material-symbols-outlined text-[15px] text-[#8a3004]">home</span>{t('membership.address')}</label>
+                  <input id="member-address" type="text" autoComplete="street-address" value={memberForm.address} onChange={(e) => setMemberForm({ ...memberForm, address: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-[15px] text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-[#8a3004] focus:ring-2 focus:ring-2 focus:ring-[#8a3004] focus:ring-offset-1 focus:outline-none transition-all duration-200" placeholder={t('membership.addressPlaceholder')} />
                 </div>
                 <div className="flex flex-col gap-2">
-                  <label htmlFor="member-message" className="text-sm font-bold text-slate-700 flex items-center gap-1.5"><span className="material-symbols-outlined text-[15px] text-[#8a3004]">chat</span>Why join Kesula?</label>
-                  <textarea id="member-message" rows="4" value={memberForm.message} onChange={(e) => setMemberForm({ ...memberForm, message: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-[15px] text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-[#8a3004] focus:ring-2 focus:ring-2 focus:ring-[#8a3004] focus:ring-offset-1 focus:outline-none transition-all duration-200 resize-none" placeholder="Tell us about yourself and how you'd like to help..."></textarea>
+                  <label htmlFor="member-message" className="text-sm font-bold text-slate-700 flex items-center gap-1.5"><span className="material-symbols-outlined text-[15px] text-[#8a3004]">chat</span>{t('membership.whyJoin')}</label>
+                  <textarea id="member-message" rows="4" value={memberForm.message} onChange={(e) => setMemberForm({ ...memberForm, message: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-[15px] text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-[#8a3004] focus:ring-2 focus:ring-2 focus:ring-[#8a3004] focus:ring-offset-1 focus:outline-none transition-all duration-200 resize-none" placeholder={t('membership.whyJoinPlaceholder')}></textarea>
                 </div>
                 <button type="submit" disabled={isMemberSubmitting} className="w-full bg-gradient-to-r from-[#8a3004] to-[#b5470a] hover:from-[#a03c08] hover:to-[#c55010] text-white font-bold text-sm uppercase tracking-[0.15em] px-8 py-4.5 rounded-2xl flex justify-center items-center gap-2.5 transition-all duration-300 transform hover:-translate-y-0.5 hover:shadow-xl hover:shadow-[#8a3004]/20 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none">
-                  {isMemberSubmitting ? (<><span className="material-symbols-outlined animate-spin text-lg">autorenew</span>Submitting...</>) : (<><span className="material-symbols-outlined text-lg">how_to_reg</span>Submit Application</>)}
+                  {isMemberSubmitting ? (<><span className="material-symbols-outlined animate-spin text-lg">autorenew</span>{t('membership.submitting')}</>) : (<><span className="material-symbols-outlined text-lg">how_to_reg</span>{t('membership.submitBtn')}</>)}
                 </button>
               </form>
             )}
           </div>
         </div>
       </section>
+
+      {/* Membership ID Card Modal */}
+      <MembershipCardModal
+        member={submittedMemberData}
+        isOpen={showIdCardModal}
+        onClose={() => setShowIdCardModal(false)}
+      />
     </div>
   );
 }

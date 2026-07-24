@@ -3,6 +3,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 import Navbar from './Navbar.jsx';
 import Footer from './Footer.jsx';
 import CookieConsent from '../ui/CookieConsent.jsx';
+import WhatsAppButton from '../ui/WhatsAppButton.jsx';
 
 export default function Layout() {
   const { pathname, hash } = useLocation();
@@ -22,13 +23,14 @@ export default function Layout() {
   }, [pathname, hash]);
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen relative">
       <Navbar />
       <main id="main-content" className="flex-grow">
         <Outlet />
       </main>
       <Footer />
       <CookieConsent />
+      <WhatsAppButton />
     </div>
   );
 }

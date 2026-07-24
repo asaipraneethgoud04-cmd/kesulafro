@@ -1,6 +1,8 @@
 import React from 'react';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function PrivacyPolicy() {
+  const { t } = useLanguage();
   return (
     <div className="relative overflow-hidden bg-background text-on-surface min-h-screen pt-20">
       {/* Background glow blobs */}
@@ -8,7 +10,7 @@ export default function PrivacyPolicy() {
       <div className="absolute bottom-[10%] right-[-10%] w-[45vw] h-[45vw] rounded-full blur-[130px] opacity-[0.05] bg-secondary pointer-events-none z-0"></div>
 
       <div className="max-w-[800px] mx-auto px-gutter py-16 relative z-10">
-        <h1 className="font-headline-lg text-4xl font-extrabold text-primary mb-8 border-b-2 border-primary/10 pb-4">Privacy Policy</h1>
+        <h1 className="font-headline-lg text-4xl font-extrabold text-primary mb-8 border-b-2 border-primary/10 pb-4">{t('footer.privacyPolicy')}</h1>
         
         <p className="text-on-surface-variant text-sm mb-6 leading-relaxed">
           Effective Date: August 1, 2024

@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, Link } from 'react-router-dom';
+import { useLanguage } from '../../context/LanguageContext';
+import LanguageSelector from '../ui/LanguageSelector';
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { t } = useLanguage();
 
   useEffect(() => {
     const handleEscape = (e) => {
@@ -14,13 +17,12 @@ export default function Navbar() {
     return () => document.removeEventListener('keydown', handleEscape);
   }, [mobileMenuOpen]);
 
-
   const navLinks = [
-    { name: 'Home', path: '/' },
-    { name: 'About Us', path: '/about' },
-    { name: 'Our Activities', path: '/activities' },
-    { name: 'Gallery', path: '/gallery' },
-    { name: 'Contact', path: '/contact' },
+    { name: t('nav.home'), path: '/' },
+    { name: t('nav.about'), path: '/about' },
+    { name: t('nav.activities'), path: '/activities' },
+    { name: t('nav.gallery'), path: '/gallery' },
+    { name: t('nav.contact'), path: '/contact' },
   ];
 
   const activeStyle = "font-body-md text-body-md tracking-wider text-primary font-semibold link-underline pb-1";
@@ -58,29 +60,32 @@ export default function Navbar() {
           ))}
         </div>
 
-        {/* Donate Button (Desktop) */}
-        <div className="hidden lg:block">
+        {/* Desktop Right Section: Language Selector + Donate Button */}
+        <div className="hidden lg:flex items-center gap-4">
+          <LanguageSelector />
           <Link
             to="/contact#donate"
             onClick={wakeUpBackend}
             className="bg-gradient-to-r from-primary to-amber-600 hover:from-amber-600 hover:to-primary text-white text-xs font-bold uppercase tracking-widest px-5 py-2.5 rounded-xl flex items-center justify-center gap-1.5 shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5"
           >
-            <span>Donate Now</span>
-
+            <span>{t('nav.donate')}</span>
           </Link>
         </div>
 
         {/* Mobile Menu Toggle */}
-        <button
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          aria-expanded={mobileMenuOpen}
-          aria-label="Toggle navigation menu"
-          className="lg:hidden text-primary focus:outline-none focus:ring-2 focus:ring-primary w-12 h-12 rounded-xl flex items-center justify-center hover:bg-primary/5 transition-all"
-        >
-          <span className="material-symbols-outlined text-2xl">
-            {mobileMenuOpen ? 'close' : 'menu'}
-          </span>
-        </button>
+        <div className="flex items-center gap-2 lg:hidden">
+          <LanguageSelector />
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-expanded={mobileMenuOpen}
+            aria-label="Toggle navigation menu"
+            className="text-primary focus:outline-none focus:ring-2 focus:ring-primary w-12 h-12 rounded-xl flex items-center justify-center hover:bg-primary/5 transition-all"
+          >
+            <span className="material-symbols-outlined text-2xl">
+              {mobileMenuOpen ? 'close' : 'menu'}
+            </span>
+          </button>
+        </div>
 
         {/* Mobile Drawer Menu */}
         {mobileMenuOpen && (
@@ -97,6 +102,7 @@ export default function Navbar() {
                 {link.name}
               </NavLink>
             ))}
+            <LanguageSelector variant="mobile" />
             <Link
               to="/contact#donate"
               onClick={() => {
@@ -105,7 +111,7 @@ export default function Navbar() {
               }}
               className="bg-gradient-to-r from-primary to-amber-600 hover:from-amber-600 hover:to-primary text-white text-xs font-bold uppercase tracking-widest px-6 py-3 rounded-xl flex items-center justify-center gap-1.5 shadow-md mt-2 w-full"
             >
-              <span>Donate Now</span>
+              <span>{t('nav.donate')}</span>
               <span className="material-symbols-outlined text-sm leading-none">favorite</span>
             </Link>
           </div>

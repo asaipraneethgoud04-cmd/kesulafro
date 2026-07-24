@@ -1,9 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { supabase } from '../lib/supabase';
+import { useLanguage } from '../context/LanguageContext';
 
 import './Gallery.css';
 
 export default function Gallery() {
+  const { t } = useLanguage();
   const [galleryImages, setGalleryImages] = useState([]);
   const observerRef = useRef(null);
 
@@ -59,13 +61,13 @@ export default function Gallery() {
   return (
     <div className="min-h-screen bg-surface flex flex-col">
       {/* Hero Section */}
-      <section className="relative min-h-[500px] md:min-h-[70vh] lg:min-h-[80vh] flex items-center justify-center pt-32 pb-20 md:pt-48 md:pb-24 z-10 reveal overflow-hidden bg-cover bg-center bg-fixed" style={{ backgroundImage: "url('/images/gallery.webp')" }}>
+      <section className="relative min-h-[600px] md:min-h-[80vh] lg:min-h-[95vh] flex items-center justify-center pt-32 pb-20 md:pt-48 md:pb-24 z-10 reveal overflow-hidden bg-cover bg-center bg-fixed" style={{ backgroundImage: "url('/images/gallery.webp')" }}>
         <div className="absolute inset-0 bg-black/60 z-0 pointer-events-none"></div>
         <div className="max-w-container mx-auto px-gutter text-center relative z-10 w-full">
-          <span className="text-white font-extrabold text-xs uppercase tracking-[0.2em] block mb-3 reveal-top text-shadow-md">Memories & Moments</span>
-          <h1 className="text-[44px] md:text-[56px] lg:text-[72px] font-bold text-white mb-6 leading-[1.05] tracking-tight max-w-4xl mx-auto text-shadow-lg reveal-top">Our Gallery</h1>
+          <span className="text-white font-extrabold text-xs uppercase tracking-[0.2em] block mb-3 reveal-top text-shadow-md">{t('nav.gallery')}</span>
+          <h1 className="text-[44px] md:text-[56px] lg:text-[72px] font-bold text-white mb-6 leading-[1.05] tracking-tight max-w-4xl mx-auto text-shadow-lg reveal-top">{t('gallery.title')}</h1>
           <p className="text-base md:text-lg text-white/95 max-w-2xl mx-auto leading-relaxed font-medium text-shadow-md reveal-top">
-            Real moments from real places — our camps, our schools, our festivals. No stock photos, just life as it happens.
+            {t('gallery.subtitle')}
           </p>
         </div>
       </section>

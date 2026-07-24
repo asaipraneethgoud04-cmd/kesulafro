@@ -24,17 +24,32 @@ import { useCategories } from '../../hooks/useCategories';
 import CategorySection from '../../components/admin/Categories/CategorySection';
 import { useDonations } from '../../hooks/useDonations';
 import DonationTable from '../../components/admin/Donations/DonationTable';
+import MembershipCardModal from '../../components/ui/MembershipCardModal';
 
 export default function AdminDashboard() {
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTabState] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    const urlTab = params.get('tab');
+    if (urlTab) return urlTab;
+    return localStorage.getItem('adminActiveTab') || 'overview';
+  });
+
+  const setActiveTab = (tabName) => {
+    setActiveTabState(tabName);
+    localStorage.setItem('adminActiveTab', tabName);
+    const newUrl = `${window.location.pathname}?tab=${tabName}`;
+    window.history.replaceState({ path: newUrl }, '', newUrl);
+  };
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [adminSelectedMemberCard, setAdminSelectedMemberCard] = useState(null);
   const [adminUser, setAdminUser] = useState(null);
   const navigate = useNavigate();
 
   // Custom Hooks
   const { events, fetchEvents, createEvent, updateEvent, deleteEvent } = useEvents();
   const { gallery, fetchGallery, addImage, deleteImage, updateImageShape } = useGallery();
-  const { members, fetchMembers, updateMemberStatus } = useMembers();
+  const { members, fetchMembers, updateMemberStatus, deleteMember } = useMembers();
   const { donations, fetchDonations, deleteDonation } = useDonations();
   const { contacts, fetchContacts } = useContacts();
   const { 
@@ -51,7 +66,9 @@ export default function AdminDashboard() {
   const [editingEvent, setEditingEvent] = useState(null);
   const [eventFormData, setEventFormData] = useState({
     title: '', description: '', category: 'Education & Skill Development',
-    tags: '', date: '', location: '', imageUrl: '', status: 'upcoming', featured: false
+    tags: '', date: '', location: '', imageUrl: '', status: 'upcoming', featured: false,
+    is_crowdfunding: false, target_amount: 0, collected_amount: 0, is_active_banner: false,
+    end_date: '', campaign_tagline: '', supporters_count: 0
   });
   const [selectedSub, setSelectedSub] = useState(null);
   const [contactFilter, setContactFilter] = useState('all');
@@ -86,6 +103,8 @@ export default function AdminDashboard() {
 
   const filteredEvents = selectedAdminCategory === 'All'
     ? events
+    : selectedAdminCategory === 'Crowdfunding'
+    ? events.filter(e => e.is_crowdfunding === true || e.is_crowdfunding === 1)
     : events.filter(e => e.category === selectedAdminCategory);
 
   const openNewEventForm = () => {
@@ -94,12 +113,14 @@ export default function AdminDashboard() {
     setEventFormData({
       title: '', description: '', category: defaultCat,
       tags: '', date: new Date().toISOString().split('T')[0], location: '',
-      imageUrl: '', status: 'upcoming', featured: false
+      imageUrl: '', status: 'upcoming', featured: false,
+      is_crowdfunding: false, target_amount: 0, collected_amount: 0, is_active_banner: false,
+      end_date: '', campaign_tagline: '', supporters_count: 0
     });
     setShowEventForm(true);
   };
 
-  const openEditEventForm = (event) => {
+  const openEditEventForm = async (event) => {
     setEditingEvent(event);
     
     let formattedDate = '';
@@ -113,10 +134,51 @@ export default function AdminDashboard() {
       }
     }
 
+    let formattedEndDate = '';
+    if (event.end_date) {
+      if (event.end_date.includes('T')) {
+        formattedEndDate = event.end_date.split('T')[0];
+      } else if (event.end_date.includes(' ')) {
+        formattedEndDate = event.end_date.split(' ')[0];
+      } else {
+        formattedEndDate = event.end_date;
+      }
+    }
+
+    // Live query total Razorpay donations for this event
+    let rzpCollected = Number(event.collected_amount || 0);
+    let rzpSupporters = Number(event.supporters_count || 0);
+
+    if (event.id) {
+      try {
+        const { data: eventDonations, error } = await supabase
+          .from('donations')
+          .select('amount')
+          .eq('event_id', event.id);
+
+        if (!error && eventDonations && eventDonations.length > 0) {
+          const sumFromRzp = eventDonations.reduce((sum, d) => sum + Number(d.amount || 0), 0);
+          if (sumFromRzp > 0) {
+            rzpCollected = sumFromRzp;
+          }
+          rzpSupporters = Math.max(rzpSupporters, eventDonations.length);
+        }
+      } catch (err) {
+        // Silent fallback
+      }
+    }
+
     setEventFormData({
       title: event.title, description: event.description, category: event.category,
       tags: event.tags || '', date: formattedDate, location: event.location || '',
-      imageUrl: event.imageUrl || '', status: event.status, featured: event.featured === 1 || event.featured === true
+      imageUrl: event.imageUrl || '', status: event.status, featured: event.featured === 1 || event.featured === true,
+      is_crowdfunding: event.is_crowdfunding || false,
+      target_amount: event.target_amount || 0,
+      collected_amount: rzpCollected,
+      is_active_banner: event.is_active_banner || false,
+      end_date: formattedEndDate,
+      campaign_tagline: event.campaign_tagline || '',
+      supporters_count: rzpSupporters
     });
     setShowEventForm(true);
   };
@@ -132,6 +194,18 @@ export default function AdminDashboard() {
       if (selectedDate < today) {
         alert("An 'Upcoming' event cannot have a date in the past.");
         return;
+      }
+    }
+
+    // If setting this event as active crowdfunding banner, deactivate others
+    if (eventFormData.is_active_banner && editingEvent && editingEvent.id) {
+      try {
+        await supabase
+          .from('events')
+          .update({ is_active_banner: false })
+          .neq('id', editingEvent.id);
+      } catch (err) {
+        // Silent fallback
       }
     }
 
@@ -157,10 +231,36 @@ export default function AdminDashboard() {
   const handleUpdateMemberStatus = async (id, newStatus) => {
     const success = await updateMemberStatus(id, newStatus);
     if (success) {
+      const activeMemberObj = selectedSub;
       setSelectedSub(prev => prev ? { ...prev, status: newStatus } : null);
+
+      if (newStatus === 'active' && activeMemberObj) {
+        try {
+          const apiUrl = import.meta.env.VITE_API_URL || '';
+          await fetch(`${apiUrl}/api/approve-member`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              memberId: id,
+              email: activeMemberObj.email,
+              name: activeMemberObj.fullName || activeMemberObj.full_name || activeMemberObj.name,
+              memberDetails: activeMemberObj
+            })
+          });
+          alert('Member status updated to Active! Approval email with Official Digital ID Card sent successfully.');
+        } catch (mailErr) {
+          console.error('Failed to trigger member approval email:', mailErr);
+        }
+      }
     } else {
       alert('Failed to update status');
     }
+  };
+
+  const handleDeleteMember = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this member application? This action cannot be undone.')) return;
+    const success = await deleteMember(id);
+    if (!success) alert('Failed to delete member application');
   };
 
   return (
@@ -194,7 +294,10 @@ export default function AdminDashboard() {
           {activeTab === 'events' && (
             <div className="space-y-6 fade-in-up">
               <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
-                <h1 className="font-headline-lg text-2xl font-bold text-primary tracking-tight">Manage Events</h1>
+                <div>
+                  <h1 className="font-headline-lg text-2xl font-bold text-primary tracking-tight">Manage Events</h1>
+                  <p className="text-xs text-slate-500 font-medium">Create events, manage categories, or launch active crowdfunding campaigns.</p>
+                </div>
                 <div className="flex flex-wrap items-center gap-3">
                   <div className="flex items-center gap-2">
                     <label htmlFor="admin-category-filter" className="text-xs font-bold uppercase tracking-wider text-on-surface-variant">Filter:</label>
@@ -202,13 +305,16 @@ export default function AdminDashboard() {
                       id="admin-category-filter"
                       value={selectedAdminCategory}
                       onChange={(e) => setSelectedAdminCategory(e.target.value)}
-                      className="glass-input rounded-xl px-3.5 py-2 text-sm text-on-surface select-arrow"
-                      style={{ minWidth: '180px' }}
+                      className="glass-input rounded-xl px-3.5 py-2 text-sm font-bold text-on-surface select-arrow"
+                      style={{ minWidth: '220px' }}
                     >
-                      <option value="All">All Categories</option>
-                      {categories.map(c => (
-                        <option key={c.id} value={c.name}>{c.name}</option>
-                      ))}
+                      <option value="All">All Events ({events.length})</option>
+                      <option value="Crowdfunding">🔥 Crowdfunding Campaigns ({events.filter(e => e.is_crowdfunding).length})</option>
+                      <optgroup label="Categories">
+                        {categories.map(c => (
+                          <option key={c.id} value={c.name}>{c.name}</option>
+                        ))}
+                      </optgroup>
                     </select>
                   </div>
                   <button onClick={openNewEventForm} className="clay-btn clay-btn-primary px-6 py-2.5 text-sm uppercase tracking-wider flex items-center gap-2">
@@ -216,6 +322,22 @@ export default function AdminDashboard() {
                     Create Event
                   </button>
                 </div>
+              </div>
+
+              {/* Quick Filter Bar */}
+              <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+                <button
+                  onClick={() => setSelectedAdminCategory('All')}
+                  className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${selectedAdminCategory === 'All' ? 'bg-[#8a3004] text-white shadow-md' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}
+                >
+                  All Events ({events.length})
+                </button>
+                <button
+                  onClick={() => setSelectedAdminCategory('Crowdfunding')}
+                  className={`px-4 py-1.5 rounded-full text-xs font-bold flex items-center gap-1.5 transition-all ${selectedAdminCategory === 'Crowdfunding' ? 'bg-[#8a3004] text-white shadow-md' : 'bg-orange-100/80 text-[#8a3004] border border-orange-200 hover:bg-orange-200/80'}`}
+                >
+                  <span>🔥 Crowdfunding Only ({events.filter(e => e.is_crowdfunding).length})</span>
+                </button>
               </div>
               <EventTable 
                 events={filteredEvents} 
@@ -251,6 +373,8 @@ export default function AdminDashboard() {
               <MemberTable 
                 members={members} 
                 setSelectedSub={setSelectedSub} 
+                onOpenIdCard={(m) => setAdminSelectedMemberCard(m)}
+                handleDeleteMember={handleDeleteMember}
               />
             </div>
           )}
@@ -297,6 +421,12 @@ export default function AdminDashboard() {
         selectedSub={selectedSub} 
         setSelectedSub={setSelectedSub} 
         handleUpdateMemberStatus={handleUpdateMemberStatus} 
+      />
+
+      <MembershipCardModal
+        member={adminSelectedMemberCard}
+        isOpen={Boolean(adminSelectedMemberCard)}
+        onClose={() => setAdminSelectedMemberCard(null)}
       />
       
     </div>

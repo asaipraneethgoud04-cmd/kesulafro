@@ -3,10 +3,13 @@ import { Link } from 'react-router-dom';
 import TiltCard from '../components/ui/TiltCard';
 import CircularGallery from '../components/ui/CircularGallery';
 import AutoScrollGallery from '../components/ui/AutoScrollGallery';
+import CrowdfundingBanner from '../components/ui/CrowdfundingBanner';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 import { supabase } from '../lib/supabase';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function Home() {
+  const { t } = useLanguage();
   const [upcomingEvents, setUpcomingEvents] = useState([]);
   const [featuredEvents, setFeaturedEvents] = useState([]);
   const [activeTab, setActiveTab] = useState('milestones');
@@ -85,43 +88,8 @@ export default function Home() {
       });
   }, []);
 
-  const milestones = [
-    { year: '2018', title: 'Where It All Started', desc: 'A small group of us got together and said — let\'s do something real. We started by recording folk stories and art from five tribal communities before they were lost forever.' },
-    { year: '2020', title: 'Our First School', desc: 'We opened the Tribal Roots school and welcomed 200+ kids. They learn in their mother tongue and in Hindi, and the elders come in to teach what textbooks can\'t.' },
-    { year: '2022', title: 'People Noticed', desc: 'We received the Heritage Guardian Award for helping keep Banjara textile arts alive. That felt good — not for the trophy, but because the artisans felt seen.' },
-    { year: '2024', title: 'Still Growing', desc: 'Today we\'re in 25+ communities. Over 2,00,000 people have been part of our healthcare camps, schools, and livelihood workshops. There\'s still so much to do.' }
-  ];
-
-  const awards = [
-    { title: 'Heritage Excellence', date: 'State Govt, 2021', icon: 'workspace_premium', desc: 'For our work in recording tribal folk songs, oral stories, and endangered languages before they fade away.' },
-    { title: 'Community Catalyst', date: 'NGO Excellence, 2022', icon: 'volunteer_activism', desc: 'For helping over 500 tribal women start their own small businesses and earn a steady living.' },
-    { title: 'Inclusive Education', date: 'Educational Impact, 2023', icon: 'school', desc: 'For taking mobile learning vans into remote areas where schools have never reached.' }
-  ];
-
-  const successStories = [
-    {
-      name: 'Lakshmi Devi',
-      role: 'Artisan, Banjara Community',
-      quote: 'They didn\'t just hand us things. They sat with us, learned our craft, and then helped us sell our weaves for what they\'re truly worth. My daughters now say they want to carry this forward.',
-      img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDDA_T-ozQyuKkb0P_BBnyAyEj77Q0rn4pquDGrRWuwqN6h1_8iBZXRbWY4Gs9DszdFhEGvTLSrQnsC_DMO8gvvr1CXeLcmSmk7KHf1lXeyT_V4dI4YhszdazxVy3vwBE6OojXjQlNZZ2d0tBJ2u5lAgOUhGanVWOKVZECFvYed6K3xQWHGs2CXe8dxzhtM3RFYToIOzxUNIc81ManEk_NzaXDzntXohoCsQtgtjt4AUFCQuGd_XfL-CAW12vK3sA4hpPGnqsbkfxo'
-    },
-    {
-      name: 'Rajesh Kumar',
-      role: 'Scholarship Recipient',
-      quote: 'Nobody in my family had ever been to college. When the mobile library van first came to our village, I thought it was a joke. Now I\'m studying environmental science.',
-      img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC8Ja6xHuPTJLJS81vU2Cq4V2v_G-YHBqK0jWyo7hlwL4ijSdZ-CHjFmQ1JfBg5vAkK39Zx3HR5QFmwexDg-CS3_8KV3rlEkrR9GyCqSWQoWXjSMiLUsY8GI15USL__w5MO8f4xn4_rrNLzZAtKBeJ2hAbbneliaYKQ9wnzcfr3_pSRxE-DRD4vkxsdsHNZ08VkH8VzFpkMcafxVlm-H_jxUHtQOdz7fkp-qFBAD7xahzD4uhuuLnGFy49ag8f09_JRgRtiPP4MSaA'
-    }
-  ];
-
-  const mediaClips = [
-    { outlet: 'Sakshi News • Oct 2023', title: 'Preserving Tribal Heritage in the Modern Age', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDlrUiAm3LIjt1IW6YFj8mGgtMOJwQFmD23m6i05lVlNlcyL16pmM4BnMzdojV25Z8urQeJj0NwLDs_bjnvM_dV8ipvX-PBfMj2x6L3LRi0zSavtGx-TeW6pm7uRbcktC1cx17FPzoQNkkP9GN7_iuAp2weYKyz7y_zEaaN_5iJO-htDsetEVh5LqJONtKoTflHtrmCsmB7xlbeYfxR4QXiDX9rji6lDN7IXlyRr1MjdKieiQ5_UramffxS84IWDZm-HIVG_NWu3sQ' },
-    { outlet: 'The Hindu • Aug 2023', title: 'Healthcare Reaches the Remote Hinterlands', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuASuqZnvBfu_i4Xe3vAyhgUGVU7UtO727urOwiLeLOVJLIXxl5FH2walVxM0bYjw5mTMpjdhPui8NMeifm0NHBgI20e0Zdb2y7HubpjZYShL9IYlGG1uV2fcD9bFe7M7rA387sJ5i7fvSHZ-5zqHRKcuUVCX03IyqiUIumupymxT_KO_c8Bwq3lUJMafmG1DrDhXFu9xC2YQqZBIljVS1p3PIzWl3kPSsTIVJ_Ce2iYeuL9usljHJVGsOeGLuR8S5cHrqTLpt_H1k0' },
-    { outlet: 'Dainik Jagran • Jan 2024', title: 'Empowering Tribal Youth through Skill Hubs', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCxwpVmmrTt4RNG2qqaIbHy9_UriP7vze78XRiGzODCLHAUxTwm9NItTeNgeP3Rs3caXThPAwj3YWcKdWm6C3ff2Tlpw9ImVLhdGeYyOco4qzJlHARpXcINn5_5RWBTO_IKnYDGW6GU477MpOfzWgArctNgRhQbslv31zHQ8aQupsnyIqpb2AD05i0s9RVzFSUj0TSKhm3kB0Lgfus0xeutF_Ea5RYlyULd6eJ0S96-d_OOxtcqUnOi1fq-M1dWefUSbhpsc3qDLAg' }
-  ];
-
   return (
     <div className="relative overflow-hidden bg-background text-on-surface">
-      {/* Removed continuous rangoli background */}
       {/* Glowing background gradient blobs for premium minimalist depth */}
       <div className="absolute top-[5%] right-[-10%] w-[50vw] h-[50vw] rounded-full blur-[130px] opacity-10 bg-primary pointer-events-none z-0 animate-float"></div>
       <div className="absolute top-[25%] left-[-15%] w-[40vw] h-[40vw] rounded-full blur-[130px] opacity-[0.08] bg-accent pointer-events-none z-0 animate-float-delayed"></div>
@@ -161,26 +129,26 @@ export default function Home() {
 
         <div className="max-w-container mx-auto px-gutter grid md:grid-cols-2 gap-12 items-center relative z-10 w-full -mt-[5%]">
           <div className="order-2 md:order-1 relative z-10">
-            <h1 className="text-[44px] md:text-[56px] lg:text-[72px] font-bold mb-8 leading-[1.05] tracking-tight text-white text-shadow-lg">
-              Empowering <br />
-              <span className="text-white font-medium text-shadow-lg underline decoration-primary decoration-4 underline-offset-4">Tribal Hearts.</span> <br />
-              Building Futures.
+            <span className="inline-block bg-primary/20 backdrop-blur-md text-white text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-4 border border-white/20">
+              {t('hero.badge')}
+            </span>
+            <h1 className="text-[38px] md:text-[52px] lg:text-[64px] font-bold mb-6 leading-[1.1] tracking-tight text-white text-shadow-lg">
+              {t('hero.title')}
             </h1>
             <p className="text-base md:text-lg text-white max-w-xl mb-10 leading-relaxed font-medium text-shadow-md">
-              We walk alongside tribal and rural communities, helping with schools, health camps, jobs, and keeping their traditions alive. That's what Kesula Trust is about.
+              {t('hero.subtitle')}
             </p>
             <div className="flex flex-wrap gap-4">
-              <Link to="/contact#donate" className="clay-btn clay-btn-primary px-12 py-5 text-base uppercase tracking-wider text-center inline-block">
-                Donate Now
+              <Link to="/contact#donate" className="clay-btn clay-btn-primary px-10 py-4 text-sm uppercase tracking-wider text-center inline-block">
+                {t('hero.donateBtn')}
               </Link>
-              <Link to="/contact#volunteer" className="clay-btn clay-btn-secondary px-12 py-5 text-base uppercase tracking-wider text-center inline-block bg-white/90">
-                Join Us
+              <Link to="/activities" className="clay-btn clay-btn-secondary px-10 py-4 text-sm uppercase tracking-wider text-center inline-block bg-white/90">
+                {t('hero.exploreBtn')}
               </Link>
             </div>
           </div>
 
           <div className="order-1 md:order-2 relative z-10 h-full flex items-end justify-end pb-10">
-            {/* Hero image or spacing can go here if needed, keeping this container empty for layout balance */}
           </div>
         </div>
       </section>
@@ -210,16 +178,16 @@ export default function Home() {
             </div>
           </div>
           <div className="reveal-right">
-            <span className="text-white text-shadow-md font-extrabold text-xs uppercase tracking-[0.2em] mb-3 block">Our Foundation</span>
-            <h2 className="text-4xl md:text-5xl text-white text-shadow-lg mb-6 leading-tight font-bold">Rooted in Love, Driven by Service</h2>
+            <span className="text-white text-shadow-md font-extrabold text-xs uppercase tracking-[0.2em] mb-3 block">{t('foundation.tag')}</span>
+            <h2 className="text-4xl md:text-5xl text-white text-shadow-lg mb-6 leading-tight font-bold">{t('foundation.title')}</h2>
             <p className="font-body-md text-white text-shadow-md leading-relaxed mb-6 font-thin">
-              Kesula Trust started because of one simple belief — the teachings of <strong>Sant Shri Sevalal Maharaj</strong> are not just words, they're a way of living. We took those teachings and turned them into action.
+              {t('foundation.p1')}
             </p>
             <p className="font-body-md text-white text-shadow-md leading-relaxed mb-8 font-thin">
-              We run health camps in villages that have no hospital nearby. We teach kids in their own language. We help families grow food and earn a livelihood. And we make sure their culture doesn't get left behind.
+              {t('foundation.p2')}
             </p>
             <Link to="/about" className="clay-btn clay-btn-secondary px-6 py-3 text-xs uppercase tracking-wider inline-block shadow-xl border-white/20">
-              Learn More About Us
+              {t('foundation.learnMore')}
             </Link>
           </div>
         </div>
@@ -244,13 +212,13 @@ export default function Home() {
                   <div className="w-10 h-10 clay-card-colored flex items-center justify-center text-primary shadow-inner rounded-full">
                     <span className="material-symbols-outlined text-xl">visibility</span>
                   </div>
-                  <h3 className="text-2xl md:text-3xl font-extrabold text-primary">Our Vision</h3>
+                  <h3 className="text-2xl md:text-3xl font-extrabold text-primary">{t('vision.title')}</h3>
                 </div>
                 <p className="font-body-md text-on-surface-variant font-light line-clamp-3 relative z-10">
-                  To carry forward the spirit of Sant Shri Sevalal Maharaj — his kindness, his love for people, and his belief that everyone deserves dignity — through real work on the ground.
+                  {t('vision.desc')}
                 </p>
                 <div className="mt-6 flex items-center text-primary text-xs font-bold uppercase tracking-wider group-hover:gap-2 transition-all relative z-10">
-                  Read full vision <span className="material-symbols-outlined text-sm ml-1">arrow_forward</span>
+                  {t('vision.readMore')} <span className="material-symbols-outlined text-sm ml-1">arrow_forward</span>
                 </div>
               </TiltCard>
 
@@ -263,35 +231,38 @@ export default function Home() {
                   <div className="w-10 h-10 clay-card-colored flex items-center justify-center text-primary shadow-inner rounded-full">
                     <span className="material-symbols-outlined text-xl">track_changes</span>
                   </div>
-                  <h3 className="text-2xl md:text-3xl font-extrabold text-primary">Our Mission</h3>
+                  <h3 className="text-2xl md:text-3xl font-extrabold text-primary">{t('missionCard.title')}</h3>
                 </div>
                 <p className="font-body-md text-on-surface-variant font-light line-clamp-3 relative z-10">
-                  To make a real difference in the daily lives of tribal families — through better schools, health support, honest livelihoods, and by making sure their voices are heard.
+                  {t('missionCard.desc')}
                 </p>
                 <div className="mt-6 flex items-center text-primary text-xs font-bold uppercase tracking-wider group-hover:gap-2 transition-all relative z-10">
-                  Read full mission <span className="material-symbols-outlined text-sm ml-1">arrow_forward</span>
+                  {t('missionCard.readMore')} <span className="material-symbols-outlined text-sm ml-1">arrow_forward</span>
                 </div>
               </TiltCard>
             </div>
           </div>
         </div>
 
+        {/* Crowdfunding Banner (Only renders if active campaign exists) */}
+        <CrowdfundingBanner />
+
         <div className="relative z-10 max-w-container mx-auto px-gutter pt-20 md:pt-32 pb-32 md:pb-44">
           <div className="text-center mb-16 reveal-top">
-            <span className="text-white text-shadow-md font-extrabold text-xs uppercase tracking-[0.2em] block mb-3">Our Work</span>
-            <h2 className="text-4xl md:text-5xl font-bold text-white text-shadow-lg mb-4">What We Do</h2>
+            <span className="text-white text-shadow-md font-extrabold text-xs uppercase tracking-[0.2em] block mb-3">{t('work.tag')}</span>
+            <h2 className="text-4xl md:text-5xl font-bold text-white text-shadow-lg mb-4">{t('work.title')}</h2>
             <p className="text-white/80 max-w-3xl mx-auto text-sm sm:text-base leading-relaxed font-light drop-shadow-md">
-              We go where the roads end. We sit with families, listen to what they actually need, and then we build it together — schools, health camps, farming support, and cultural programmes. No jargon, just honest work.
+              {t('work.desc')}
             </p>
           </div>
           <div className="flex overflow-x-auto md:grid md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-8 pb-8 md:pb-0 snap-x snap-mandatory scrollbar-none -mx-4 px-4 md:mx-0 md:px-0 reveal-bottom">
             {[
-              { id: 'education', name: 'Education & Skill Development', icon: 'school' },
-              { id: 'healthcare', name: 'Healthcare & Wellness', icon: 'medication' },
-              { id: 'livelihood', name: 'Livelihood & Rural Development', icon: 'engineering' },
-              { id: 'empowerment', name: 'Women, Youth & Disability Empowerment', icon: 'diversity_3' },
-              { id: 'environment', name: 'Environment & Sustainability', icon: 'eco' },
-              { id: 'culture', name: 'Culture, Community & Animal Welfare', icon: 'brush' }
+              { id: 'education', name: t('work.activities.education'), icon: 'school' },
+              { id: 'healthcare', name: t('work.activities.healthcare'), icon: 'medication' },
+              { id: 'livelihood', name: t('work.activities.livelihood'), icon: 'engineering' },
+              { id: 'empowerment', name: t('work.activities.empowerment'), icon: 'diversity_3' },
+              { id: 'environment', name: t('work.activities.environment'), icon: 'eco' },
+              { id: 'culture', name: t('work.activities.culture'), icon: 'brush' }
             ].map(activity => (
               <Link to="/activities" key={activity.id} className="min-w-[85vw] md:min-w-0 snap-center flex-shrink-0 group relative rounded-2xl overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl block">
                 {/* Card Background (Turns pure white on hover) */}
@@ -309,7 +280,7 @@ export default function Home() {
                     </div>
                   </div>
                   <div className="mt-6 flex items-center gap-1.5 text-primary text-xs font-bold uppercase tracking-wider group-hover:text-black transition-all duration-300">
-                    <span>Learn More</span>
+                    <span>{t('work.learnMoreBtn')}</span>
                     <span className="material-symbols-outlined text-sm transition-transform duration-300 group-hover:translate-x-1.5">arrow_forward</span>
                   </div>
                 </div>
@@ -324,23 +295,24 @@ export default function Home() {
         {/* Zig-Zag Tribal Art (Left) */}
         <img src="/images/tribal_1.webp" loading="lazy" className="absolute top-1/2 -translate-y-1/2 left-0 w-[650px] h-[650px] opacity-[0.25] mix-blend-overlay pointer-events-none object-contain animate-spin-vertical-centered" alt="" />
         <div className="max-w-container mx-auto px-gutter text-center">
-          <h2 className="text-4xl md:text-5xl font-bold text-primary mb-12 reveal-top">Our Collective Impact</h2>
+          <h2 className="text-4xl md:text-5xl font-bold text-primary mb-4 reveal-top">{t('stats.title')}</h2>
+          <p className="text-on-surface-variant max-w-2xl mx-auto text-sm md:text-base mb-12 reveal-top">{t('stats.subtitle')}</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 reveal-bottom">
             <TiltCard className="glass-panel p-8 border-2 !border-primary rounded-3xl relative overflow-hidden group">
-              <div className="relative z-10 font-headline-lg text-primary text-4xl font-extrabold mb-2.5">200K+</div>
-              <div className="relative z-10 text-on-surface-variant font-bold text-xs uppercase tracking-widest">Lives Impacted</div>
+              <div className="relative z-10 font-headline-lg text-primary text-4xl font-extrabold mb-2.5">{t('stats.stat1')}</div>
+              <div className="relative z-10 text-on-surface-variant font-bold text-xs uppercase tracking-widest">{t('stats.label1')}</div>
             </TiltCard>
             <TiltCard className="glass-panel p-8 border-2 !border-primary rounded-3xl relative overflow-hidden group">
-              <div className="relative z-10 font-headline-lg text-primary text-4xl font-extrabold mb-2.5">50+</div>
-              <div className="relative z-10 text-on-surface-variant font-bold text-xs uppercase tracking-widest">Villages Reached</div>
+              <div className="relative z-10 font-headline-lg text-primary text-4xl font-extrabold mb-2.5">{t('stats.stat2')}</div>
+              <div className="relative z-10 text-on-surface-variant font-bold text-xs uppercase tracking-widest">{t('stats.label2')}</div>
             </TiltCard>
             <TiltCard className="glass-panel p-8 border-2 !border-primary rounded-3xl relative overflow-hidden group">
-              <div className="relative z-10 font-headline-lg text-primary text-4xl font-extrabold mb-2.5">1,000+</div>
-              <div className="relative z-10 text-on-surface-variant font-bold text-xs uppercase tracking-widest">Active Volunteers</div>
+              <div className="relative z-10 font-headline-lg text-primary text-4xl font-extrabold mb-2.5">{t('stats.stat3')}</div>
+              <div className="relative z-10 text-on-surface-variant font-bold text-xs uppercase tracking-widest">{t('stats.label3')}</div>
             </TiltCard>
             <TiltCard className="glass-panel p-8 border-2 !border-primary rounded-3xl relative overflow-hidden group">
-              <div className="relative z-10 font-headline-lg text-primary text-4xl font-extrabold mb-2.5">6+ Years</div>
-              <div className="relative z-10 text-on-surface-variant font-bold text-xs uppercase tracking-widest">Dedicated Service</div>
+              <div className="relative z-10 font-headline-lg text-primary text-4xl font-extrabold mb-2.5">{t('stats.stat4')}</div>
+              <div className="relative z-10 text-on-surface-variant font-bold text-xs uppercase tracking-widest">{t('stats.label4')}</div>
             </TiltCard>
           </div>
         </div>
@@ -404,7 +376,7 @@ export default function Home() {
                             </div>
                             <div className="w-full mt-auto">
                               <Link to="/activities" className="clay-btn clay-btn-accent w-full py-2.5 text-xs font-bold uppercase tracking-wider text-center block">
-                                Register
+                                {t('events.register')}
                               </Link>
                             </div>
                           </TiltCard>
@@ -435,7 +407,7 @@ export default function Home() {
                           </div>
                           <div className="w-full mt-auto">
                             <Link to="/activities" className="clay-btn clay-btn-accent w-full py-2.5 text-xs font-bold uppercase tracking-wider text-center block">
-                              Register
+                              {t('events.register')}
                             </Link>
                           </div>
                         </TiltCard>
@@ -450,8 +422,8 @@ export default function Home() {
 
         return (
           <>
-            {renderEventSection(featuredEvents, 'Featured Events', featuredCarouselRef)}
-            {renderEventSection(upcomingEvents, 'Upcoming Events', upcomingCarouselRef)}
+            {renderEventSection(featuredEvents, t('events.featured'), featuredCarouselRef)}
+            {renderEventSection(upcomingEvents, t('events.upcoming'), upcomingCarouselRef)}
           </>
         );
       })()}
@@ -461,8 +433,8 @@ export default function Home() {
         <img src="/images/rangoli_bg.webp" loading="lazy" className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] md:w-[800px] h-auto opacity-[0.25] mix-blend-multiply pointer-events-none object-contain z-0 animate-spin-centered" alt="" />
         <div className="max-w-container mx-auto px-gutter relative z-10">
           <div className="text-center mb-16 reveal-top">
-            <span className="text-primary font-extrabold text-xs uppercase tracking-[0.2em] block mb-3">Our Memories</span>
-            <h2 className="text-4xl md:text-5xl font-bold text-on-surface mb-6">Moments of Impact</h2>
+            <span className="text-primary font-extrabold text-xs uppercase tracking-[0.2em] block mb-3">{t('memories.tag')}</span>
+            <h2 className="text-4xl md:text-5xl font-bold text-on-surface mb-6">{t('memories.title')}</h2>
           </div>
 
           <div className="reveal-bottom pb-12 w-full">
@@ -474,7 +446,7 @@ export default function Home() {
               to="/gallery"
               className="bg-[#8a3004] hover:bg-[#a0420b] text-white text-xs font-bold uppercase tracking-widest px-8 py-4 rounded-2xl inline-flex items-center justify-center gap-2 transition-all duration-300 transform hover:-translate-y-0.5 hover:shadow-xl hover:shadow-[#8a3004]/25"
             >
-              <span>View Gallery</span>
+              <span>{t('memories.viewBtn')}</span>
               <span className="material-symbols-outlined text-sm">photo_library</span>
             </Link>
           </div>
@@ -490,17 +462,17 @@ export default function Home() {
           <div className="absolute -bottom-24 -right-24 w-64 h-64 rounded-full bg-secondary/30 blur-[90px] pointer-events-none z-0"></div>
 
           <div className="relative z-10">
-            <h2 className="text-4xl md:text-5xl text-white text-shadow-lg mb-6 font-extrabold max-w-2xl mx-auto leading-[1.2]">Be the change for a better tomorrow.</h2>
+            <h2 className="text-4xl md:text-5xl text-white text-shadow-lg mb-6 font-extrabold max-w-2xl mx-auto leading-[1.2]">{t('cta.title')}</h2>
             <p className="font-body-lg text-body-lg text-white text-shadow-md max-w-2xl mx-auto mb-10 leading-relaxed font-medium">
-              Even a small contribution goes a long way. It could mean a child going to school, a family getting medical care, or an elder seeing their craft celebrated again.
+              {t('cta.subtitle')}
             </p>
             <div className="flex flex-wrap justify-center items-center gap-5">
               <Link to="/contact#donate" className="bg-gradient-to-r from-primary to-amber-600 hover:from-amber-600 hover:to-primary text-white text-sm font-bold uppercase tracking-widest px-8 py-4 rounded-2xl flex items-center justify-center gap-2 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/25">
-                <span>Donate Now</span>
+                <span>{t('cta.donateNow')}</span>
                 <span className="material-symbols-outlined text-lg leading-none">favorite</span>
               </Link>
               <Link to="/contact#volunteer" className="bg-white/10 hover:bg-white/20 text-white border border-white/20 hover:border-white/40 text-sm font-bold uppercase tracking-widest px-8 py-4 rounded-2xl flex items-center justify-center gap-2 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg">
-                <span>Become a Volunteer</span>
+                <span>{t('cta.becomeMember')}</span>
                 <span className="material-symbols-outlined text-lg leading-none">volunteer_activism</span>
               </Link>
             </div>

@@ -3,9 +3,47 @@ import { motion, AnimatePresence, useScroll, useTransform, useVelocity, useSprin
 import { useScrollReveal } from '../hooks/useScrollReveal';
 import { supabase } from '../lib/supabase';
 import { categoryService } from '../services/categoryService';
+import { useLanguage } from '../context/LanguageContext';
+
+const getTranslatedCategory = (cat, t) => {
+  if (!cat) return '';
+  if (cat === 'All') return t('work.activities.all');
+  const lower = cat.toLowerCase();
+  if (lower.includes('education')) return t('work.activities.education');
+  if (lower.includes('healthcare') || lower.includes('health')) return t('work.activities.healthcare');
+  if (lower.includes('livelihood') || lower.includes('rural')) return t('work.activities.livelihood');
+  if (lower.includes('women') || lower.includes('empowerment')) return t('work.activities.empowerment');
+  if (lower.includes('environment') || lower.includes('eco')) return t('work.activities.environment');
+  if (lower.includes('culture') || lower.includes('community') || lower.includes('animal')) return t('work.activities.culture');
+  return cat;
+};
+
+const getTranslatedEventTitle = (event, t) => {
+  if (!event || !event.title) return '';
+  const title = event.title;
+  if (title.includes('Sevalal Maharaj Jayanthi')) {
+    return t('events.sevalalTitle');
+  }
+  if (title.includes('Teej')) {
+    return t('events.teejTitle');
+  }
+  return title;
+};
+
+const getTranslatedEventDesc = (event, t) => {
+  if (!event || !event.description) return '';
+  if (event.title && event.title.includes('Sevalal Maharaj Jayanthi')) {
+    return t('events.sevalalDesc');
+  }
+  if (event.title && event.title.includes('Teej')) {
+    return t('events.teejDesc');
+  }
+  return event.description;
+};
 
 // Parallax Card Component: Translates image inside the card frame relative to card viewport entrance/exit
 function ParallaxEventCard({ event, idx, isActive, fallbackImages, skewSpring, scaleSpring }) {
+  const { t } = useLanguage();
   const cardRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: cardRef,
@@ -52,10 +90,10 @@ function ParallaxEventCard({ event, idx, isActive, fallbackImages, skewSpring, s
         {/* Floating Thematic Label bottom left */}
         <div className="absolute bottom-8 left-8 right-8 space-y-2.5 text-left pointer-events-none">
           <span className="px-4 py-2 rounded-full text-[10px] sm:text-xs font-extrabold uppercase tracking-widest bg-[#8a3004] text-white inline-block shadow-md">
-            {event.category}
+            {getTranslatedCategory(event.category, t)}
           </span>
           <h4 className="text-white font-black text-xl sm:text-3xl leading-tight line-clamp-2 group-hover:text-[#c5a880] transition-colors duration-300 drop-shadow-md">
-            {event.title}
+            {getTranslatedEventTitle(event, t)}
           </h4>
         </div>
       </motion.div>
@@ -64,6 +102,7 @@ function ParallaxEventCard({ event, idx, isActive, fallbackImages, skewSpring, s
 }
 
 export default function Activities() {
+  const { t } = useLanguage();
   const [upcomingEvents, setUpcomingEvents] = useState([]);
   const [allEvents, setAllEvents] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -259,21 +298,11 @@ export default function Activities() {
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="text-[#8a3004] font-extrabold text-xs uppercase tracking-[0.4em] block mb-6 text-shadow-sm"
           >
-            OUR WORK ON THE GROUND
+            {t('work.tag')}
           </motion.span>
           
-          <h1 className="text-[52px] sm:text-[72px] md:text-[96px] font-extrabold text-slate-900 tracking-tighter leading-[0.95] max-w-5xl mx-auto mb-8 flex flex-wrap justify-center gap-x-4">
-            {titleWords.map((word, i) => (
-              <motion.span
-                key={i}
-                initial={{ opacity: 0, y: 50, rotateX: 30 }}
-                animate={{ opacity: 1, y: 0, rotateX: 0 }}
-                transition={{ duration: 1, delay: i * 0.15, ease: [0.16, 1, 0.3, 1] }}
-                className="inline-block origin-bottom"
-              >
-                {word}
-              </motion.span>
-            ))}
+          <h1 className="text-[48px] sm:text-[64px] md:text-[84px] font-extrabold text-slate-900 tracking-tight leading-[0.95] max-w-5xl mx-auto mb-8">
+            {t('activities.title')}
           </h1>
 
           <motion.p 
@@ -282,7 +311,7 @@ export default function Activities() {
             transition={{ duration: 1.2, delay: 0.6 }}
             className="text-base sm:text-lg md:text-xl text-slate-950 max-w-2xl mx-auto font-normal leading-relaxed"
           >
-            A look at what we've been up to — the events, the drives, the camps, and the people behind them.
+            {t('activities.subtitle')}
           </motion.p>
         </motion.div>
 
@@ -315,7 +344,7 @@ export default function Activities() {
                 viewport={{ once: true }}
                 className="text-[#8a3004] font-bold text-xs uppercase tracking-[0.25em] block mb-3"
               >
-                WHAT'S COMING UP
+                {t('activitiesPage.comingUp')}
               </motion.span>
               <motion.h2 
                 initial={{ opacity: 0, y: 20 }}
@@ -324,7 +353,7 @@ export default function Activities() {
                 transition={{ duration: 0.6 }}
                 className="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 font-serif"
               >
-                Events You Can Join
+                {t('activitiesPage.joinEvents')}
               </motion.h2>
             </div>
             
@@ -345,7 +374,7 @@ export default function Activities() {
               </div>
             ) : (
               <span className="text-xs text-slate-500 tracking-wider flex items-center gap-2">
-                Join our upcoming initiatives <span className="material-symbols-outlined text-sm animate-pulse">volunteer_activism</span>
+                {t('activitiesPage.joinSubtitle')} <span className="material-symbols-outlined text-sm animate-pulse">volunteer_activism</span>
               </span>
             )}
           </div>
@@ -389,13 +418,13 @@ export default function Activities() {
                       <div className="relative z-10 flex flex-col justify-between h-full w-full">
                         <div className="flex justify-between items-center">
                           <span className="px-4 py-2 rounded-full text-xs font-extrabold uppercase tracking-widest bg-[#8a3004] text-white">
-                            {event.category}
+                            {getTranslatedCategory(event.category, t)}
                           </span>
                         </div>
 
                         <div className="space-y-3">
                           <h3 className="text-xl md:text-2xl font-black text-white leading-tight group-hover:text-[#c5a880] transition-colors duration-300 drop-shadow-md">
-                            {event.title}
+                            {getTranslatedEventTitle(event, t)}
                           </h3>
                           
                           <div className="bg-black/40 backdrop-blur-md p-4 rounded-2xl border border-white/10 text-white/90 text-sm space-y-2">
@@ -454,13 +483,13 @@ export default function Activities() {
                       <div className="relative z-10 flex flex-col justify-between h-full w-full">
                         <div className="flex justify-between items-center">
                           <span className="px-4 py-2 rounded-full text-xs font-extrabold uppercase tracking-widest bg-[#8a3004] text-white">
-                            {event.category}
+                            {getTranslatedCategory(event.category, t)}
                           </span>
                         </div>
 
                         <div className="space-y-3">
                           <h3 className="text-xl md:text-2xl font-black text-white leading-tight group-hover:text-[#c5a880] transition-colors duration-300 drop-shadow-md">
-                            {event.title}
+                            {getTranslatedEventTitle(event, t)}
                           </h3>
                           
                           <div className="bg-black/40 backdrop-blur-md p-4 rounded-2xl border border-white/10 text-white/90 text-sm space-y-2">
@@ -513,7 +542,7 @@ export default function Activities() {
                       isActive ? 'text-[#8a3004]' : 'text-slate-500 hover:text-slate-800'
                     }`}
                   >
-                    <span>{catName}</span>
+                    <span>{getTranslatedCategory(catName, t)}</span>
                     {isActive && (
                       <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#8a3004] rounded-full animate-fade-in"></span>
                     )}
@@ -527,13 +556,13 @@ export default function Activities() {
         {isLoading ? (
           <div className="max-w-container mx-auto px-gutter py-32 text-center text-slate-500">
             <div className="w-12 h-12 rounded-full border-4 border-slate-200 border-t-[#8a3004] animate-spin mx-auto mb-4"></div>
-            <p className="text-sm font-light">Hang on, loading our latest events...</p>
+            <p className="text-sm font-light">{t('activitiesPage.loading')}</p>
           </div>
         ) : filteredEvents.length === 0 ? (
           <div className="max-w-container mx-auto px-gutter py-24 text-center text-slate-500">
             <span className="material-symbols-outlined text-6xl opacity-30 text-[#8a3004] mb-4">layers_clear</span>
-            <h3 className="text-xl font-bold text-slate-800">Nothing Here Yet</h3>
-            <p className="text-sm font-light mt-1">We haven't added any events from the admin dashboard yet. Check back soon!</p>
+            <h3 className="text-xl font-bold text-slate-800">{t('activitiesPage.nothingHere')}</h3>
+            <p className="text-sm font-light mt-1">{t('activitiesPage.nothingDesc')}</p>
           </div>
         ) : (
           <>
@@ -602,12 +631,12 @@ export default function Activities() {
                         {/* Editorial Typographical Block */}
                         <motion.div variants={itemVariants} className="space-y-2">
                           <span className="text-[#8a3004] font-extrabold text-xs uppercase tracking-[0.3em] block mb-1 font-mono">
-                            {activeEventData.category}
+                            {getTranslatedCategory(activeEventData.category, t)}
                           </span>
                           
                           {/* Staggered Word Reveal Heading */}
                           <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tighter text-slate-900 font-serif leading-tight mb-1">
-                            {activeEventData.title.split(" ").map((word, i) => (
+                            {getTranslatedEventTitle(activeEventData, t).split(" ").map((word, i) => (
                               <span key={i} className="inline-block overflow-hidden mr-3">
                                 <motion.span
                                   initial={{ y: "100%" }}
@@ -637,7 +666,7 @@ export default function Activities() {
                           variants={itemVariants} 
                           className="text-[15px] text-slate-700 font-light leading-relaxed font-sans"
                         >
-                          {activeEventData.description}
+                          {getTranslatedEventDesc(activeEventData, t)}
                         </motion.p>
 
                         {/* Minimalist Editorial Tags Separated by Slashes */}
@@ -723,7 +752,7 @@ export default function Activities() {
                           </div>
                         )}
                         <span className="absolute bottom-4 left-4 bg-[#8a3004] text-white text-[10px] uppercase font-extrabold tracking-widest px-3 py-1.5 rounded-full shadow-md">
-                          {event.category}
+                          {getTranslatedCategory(event.category, t)}
                         </span>
                       </div>
 
@@ -743,11 +772,11 @@ export default function Activities() {
                         </div>
 
                         <h3 className="text-xl font-bold text-slate-800 tracking-tight font-serif leading-snug line-clamp-2">
-                          {event.title}
+                          {getTranslatedEventTitle(event, t)}
                         </h3>
 
                         <p className="text-[13px] text-slate-500 leading-relaxed font-light line-clamp-4">
-                          {event.description}
+                          {getTranslatedEventDesc(event, t)}
                         </p>
 
                         {event.tags && (

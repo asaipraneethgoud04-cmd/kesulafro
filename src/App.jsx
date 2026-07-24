@@ -34,6 +34,20 @@ export default function App() {
     return () => clearTimeout(timer);
   }, [showIntro]);
 
+  // Automatic background backend warm-up when visitor lands on site
+  useEffect(() => {
+    const backendUrl = import.meta.env.VITE_API_URL || 'https://kesulaback.onrender.com';
+    const pingBackend = () => {
+      fetch(`${backendUrl}/api/ping`, { mode: 'cors' })
+        .then(() => console.log('⚡ Backend pre-warmed & ready'))
+        .catch(() => {});
+    };
+
+    pingBackend();
+    const interval = setInterval(pingBackend, 5 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <LanguageProvider>
       <AnimatePresence>
